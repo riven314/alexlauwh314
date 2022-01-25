@@ -38,11 +38,11 @@ How could we apply this concept to NeRF? Recall that NeRF describes the geometry
 
 ## 3.1. NeRF-SH: Linking Spherical Harmonics to NeRF
 ---
-The authors propose NeRF-SH that models a 3D point's colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. The consequence is to enable a space-efficient way for caching predicted colours (as a PlenOctree structure).
+The authors propose NeRF-SH that models a 3D point's colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. It enables a space-efficient way to spatially cache the colours predicted by the network (into a PlenOctree structure).
 
 ![nerf_sh_network.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/nerf_sh_network.png "from paper")
 
-To compactly represent a spherical function, they are expressed as coefficients of Spherical Harmonics $(k\_{l}^{m})\_{l:0\leq l \leq l\_{max}}^{m: -l \leq m \leq l}$, where $k\_{l}^{m}$ is 3-dimensional for describing the 3 channels for RGB colour.
+We can compactly express a spherical function as coefficients of Spherical Harmonics $(k\_{l}^{m})\_{l:0\leq l \leq l\_{max}}^{m: -l \leq m \leq l}$, where $k\_{l}^{m}$ is 3-dimensional for describing the 3 channels of RGB colour.
 
 Once we yield the coefficients $(k\_{l}^{m})\_{l:0\leq l \leq l\_{max}}^{m: -l \leq m \leq l}$, we could easily render the colour at any viewing direction by a sum of Spherical Harmonics $\bold{Y}\_{l}^{m}(\theta, \phi)$ weighted by their associated $k\_{l}^{m}$, followed by a sigmoid transformation $S(.)$:
 
