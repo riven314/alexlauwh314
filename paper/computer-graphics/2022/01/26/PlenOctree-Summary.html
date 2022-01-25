@@ -160,11 +160,11 @@ window.onload = wrap_img;
 <h2 id="31-nerf-sh-linking-spherical-harmonics-to-nerf">
 <a class="anchor" href="#31-nerf-sh-linking-spherical-harmonics-to-nerf" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1. NeRF-SH: Linking Spherical Harmonics to NeRF</h2>
 <hr>
-<p>The authors propose NeRF-SH that models a 3D point’s colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. The consequence is to enable a space-efficient way for caching predicted colours (as a PlenOctree structure).</p>
+<p>The authors propose NeRF-SH that models a 3D point’s colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. It enables a space-efficient way to spatially cache the colours predicted by the network (into a PlenOctree structure).</p>
 
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_network.png" alt="nerf_sh_network.png" title="from paper"></p>
 
-<p>To compactly represent a spherical function, they are expressed as coefficients of Spherical Harmonics $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, where $k_{l}^{m}$ is 3-dimensional for describing the 3 channels for RGB colour.</p>
+<p>We can compactly express a spherical function as coefficients of Spherical Harmonics $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, where $k_{l}^{m}$ is 3-dimensional for describing the 3 channels of RGB colour.</p>
 
 <p>Once we yield the coefficients $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, we could easily render the colour at any viewing direction by a sum of Spherical Harmonics $\bold{Y}_{l}^{m}(\theta, \phi)$ weighted by their associated $k_{l}^{m}$, followed by a sigmoid transformation $S(.)$:</p>
 
