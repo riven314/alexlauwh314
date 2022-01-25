@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Paper Summary: ‘PlenOctrees for Real-time Rendering of Neural Radiance Fields’ | fastpages</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Paper Summary: ‘PlenOctrees for Real-time Rendering of Neural Radiance Fields’" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Vanilla NeRF suffers from slow rendering speed. This paper proposes a variant called NeRF-SH and a data structure for caching called PlenOctree which drives significant speedup." />
+<meta property="og:description" content="Vanilla NeRF suffers from slow rendering speed. This paper proposes a variant called NeRF-SH and a data structure for caching called PlenOctree which drives significant speedup." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/01/26/PlenOctree-Summary.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/01/26/PlenOctree-Summary.html" />
+<meta property="og:site_name" content="fastpages" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-01-26T00:00:00-06:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png" />
+<meta property="twitter:title" content="Paper Summary: ‘PlenOctrees for Real-time Rendering of Neural Radiance Fields’" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/01/26/PlenOctree-Summary.html","@type":"BlogPosting","headline":"Paper Summary: ‘PlenOctrees for Real-time Rendering of Neural Radiance Fields’","dateModified":"2022-01-26T00:00:00-06:00","datePublished":"2022-01-26T00:00:00-06:00","image":"https://riven314.github.io/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/01/26/PlenOctree-Summary.html"},"description":"Vanilla NeRF suffers from slow rendering speed. This paper proposes a variant called NeRF-SH and a data structure for caching called PlenOctree which drives significant speedup.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="fastpages" /><link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">fastpages</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Paper Summary: &#39;PlenOctrees for Real-time Rendering of Neural Radiance Fields&#39;</h1><p class="page-description">Vanilla NeRF suffers from slow rendering speed. This paper proposes a variant called NeRF-SH and a data structure for caching called PlenOctree which drives significant speedup.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-01-26T00:00:00-06:00" itemprop="datePublished">
+        Jan 26, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#paper">paper</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#computer-graphics">computer-graphics</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#1-motivations">1. Motivations</a></li>
+<li class="toc-entry toc-h2"><a href="#2-introduction-to-spherical-harmonics">2. Introduction to Spherical Harmonics</a></li>
+<li class="toc-entry toc-h2"><a href="#31-nerf-sh-linking-spherical-harmonics-to-nerf">3.1. NeRF-SH: Linking Spherical Harmonics to NeRF</a></li>
+<li class="toc-entry toc-h2"><a href="#32-nerf-sh-training-with-sparsity-loss">3.2. NeRF-SH: Training with Sparsity Loss</a></li>
+<li class="toc-entry toc-h2"><a href="#41-conversion-to-plenoctree">4.1. Conversion to PlenOctree</a></li>
+<li class="toc-entry toc-h2"><a href="#42-rendering-with-plenoctree">4.2. Rendering with PlenOctree</a></li>
+<li class="toc-entry toc-h2"><a href="#43-fine-tuning-plenoctree">4.3. Fine-tuning PlenOctree</a></li>
+<li class="toc-entry toc-h2"><a href="#5-experimental-results">5. Experimental Results</a></li>
+<li class="toc-entry toc-h2"><a href="#limitation">Limitation</a></li>
+<li class="toc-entry toc-h2"><a href="#references">References</a></li>
+</ul><p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/cover.png" alt="cover.png"></p>
+
+<h2 id="1-motivations">
+<a class="anchor" href="#1-motivations" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Motivations</h2>
+<hr>
+<p>Neural Radiance Field (NeRF) has gained traction in academia thanks to its power to render novel 2D views of a 3D scene trained on the posed images. However NeRF’s rendering speed is noticeably slow. Without a GPU accelerator, it could easily take more than 1 minute to render a 2D view. Such drawback blocks its application on latency-sensitive domain.</p>
+
+<p>It is slow becaues numerous network calls have to be made for rendering even one single pixel. The authors of this paper propose the following to address this issue and achieves a significant speedup:</p>
+<ul>
+  <li>Invent an efficient data structure called PlenOctrees to spatially cache the outputs from a trained NeRF</li>
+  <li>Introduce a variant of NeRF (NeRF-SH) that is easily convertible into PlenOctree representation</li>
+</ul>
+
+<h2 id="2-introduction-to-spherical-harmonics">
+<a class="anchor" href="#2-introduction-to-spherical-harmonics" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Introduction to Spherical Harmonics</h2>
+<hr>
+<p>Spherical Harmonics (SH) is a critical concept behind their proposal. Shperical Harmonics is a collections of spherical functions used to describe the surface of some special spheres.</p>
+
+<p>Technically, each of the function receives a direction in 3D space, parametrised as $(\theta, \phi)$, as an input and the absolute value of its output (output is a complex number) tells you the associated surface’s distance from the origin. The functions are usually annotated as $Y_{l}^{m}(\theta, \phi)$ where $m$ and $l$ determines the shape of the sphere to be described.</p>
+
+<p>Below visualise some instances of the shperical surfaces:</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/spherical_harmonics.png" alt="spherical_harmonics.png" title="from wiki"></p>
+
+<p>In the same sprit that some functions can be decomposed into polynomials, and that any periodic functions can be decomposed into Fourier Series, Spherical Harmonics are powerful enough to express any spherical function when composed together properly.</p>
+
+<p>Additionally it provides a compact way to represent any spherical functions. We only need to book keep the coefficients for each SH function and then we can recover the target spherical function at any input (details in next session).</p>
+
+<p>How could we apply this concept to NeRF? Recall that NeRF describes the geometry (i.e. density $\sigma$) and appearance (i.e. RGB colour $\bold{c}$) of any 3D point $\bold{x}$ in a 3D scene at any viewing direction $\bold{d}$. While a 3D point’s density is invariant of your viewing direction, its colour varies with your viewing angle. Therefore, we can treat the colour exactly like spherical function, except that we need 3 independent real-valued spherical functions to do so because we need 3 channels (red, green and blue) to describe a RGB colour.</p>
+
+<h2 id="31-nerf-sh-linking-spherical-harmonics-to-nerf">
+<a class="anchor" href="#31-nerf-sh-linking-spherical-harmonics-to-nerf" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1. NeRF-SH: Linking Spherical Harmonics to NeRF</h2>
+<hr>
+<p>The authors propose NeRF-SH that models a 3D point’s colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. The consequence is to enable a space-efficient way for caching predicted colours (as a PlenOctree structure).</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_network.png" alt="nerf_sh_network.png" title="from paper"></p>
+
+<p>To compactly represent a spherical function, they are expressed as coefficients of Spherical Harmonics $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, where $k_{l}^{m}$ is 3-dimensional for describing the 3 channels for RGB colour.</p>
+
+<p>Once we yield the coefficients $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, we could easily render the colour at any viewing direction by a sum of Spherical Harmonics $\bold{Y}_{l}^{m}(\theta, \phi)$ weighted by their associated $k_{l}^{m}$, followed by a sigmoid transformation $S(.)$:</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sh_to_point_colour.png" alt="sh_to_point_colour.png" title="from paper"></p>
+
+<p>We can neatly summarize the pipeline for training NeRF-SH with a diagram extracted from the paper.</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_pipeline.png" alt="nerf_sh_pipeline.png" title="from paper"></p>
+
+<h2 id="32-nerf-sh-training-with-sparsity-loss">
+<a class="anchor" href="#32-nerf-sh-training-with-sparsity-loss" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.2. NeRF-SH: Training with Sparsity Loss</h2>
+<hr>
+<p>There is an additional caveat for the training: when solely supervised by standard reconstruction loss during training, NeRF-SH tends to predict arbitrary geometry on unused region. Although it doesn’t hurt the rendering quality but it occupies a lot of redundant space when NeRF-SH is converted into PlenOctree.</p>
+
+<p>To encourage NeRF-SH to predict unused region to be empty, a sparsity loss is additionally enforced. To evaluate the loss, we uniformly sample $K$ points within a bounding box and consider their associated densities $\sigma_{k}$. High density leads to high sparsity loss.</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sparsity_loss.png" alt="sparsity_loss.png" title="from paper"></p>
+
+<p>With sparsity loss enforced, the unused region can be effectively pruned away from PlenOctree thanks to their negligible densities. As a result, it leads to a tighter bound on a 3D scene and hence a higher spatial resolution on PlenOctree representation (because voxel cells are mostly distributed to the important region).</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/compare_wo_sparsity_loss.png" alt="compare_wo_sparsity_loss.png" title="from paper"></p>
+
+<h2 id="41-conversion-to-plenoctree">
+<a class="anchor" href="#41-conversion-to-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.1. Conversion to PlenOctree</h2>
+<hr>
+<p>Once NeRF-SH is trained, we can easily converted it into a PlenOctree representation with the following procedures:</p>
+
+<ol>
+  <li>
+<strong>Evaluation:</strong> Sample uniformly spaced 3D grid points and evaluate their density $\sigma$ with the trained NeRF-SH.</li>
+  <li>
+<strong>Filtering:</strong> Partition the grid points into different voxel cells. Render all training views and keep track of the maximum ray weight $1-exp(-\sigma_{i} \delta_{i})$ in each voxel cell, where $\delta_{i}$ is the distance between sample points along a ray (more details in next session). Cell with low ray weight implies it is likely an empty space with negligible contribution to any training views so we can safely prune them.</li>
+  <li>
+<strong>Sampling:</strong> To determine the SH coefficients for each voxel cell, we randomly sample 256 points within a voxel cells and take an average of their associated SH coefficients.</li>
+</ol>
+
+<h2 id="42-rendering-with-plenoctree">
+<a class="anchor" href="#42-rendering-with-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.2. Rendering with PlenOctree</h2>
+<hr>
+<p>With the converted PlenOctree, we could easily achieve blazingly fast rendering speed with the following procedures:</p>
+
+<ol>
+  <li>Cast a ray $\bold{r}$ from the pixel to be rendered into the PlenOctree and consider all voxel cells that intersect with the ray.</li>
+  <li>Segment the ray by voxel boundaries. Consider the lengths of each segments as ${\delta_{i}}_{i=1}^{N}$ and look up their associated density ${ \sigma_{i} }_{i=1}^{N}$ and SH coefficients ${ \bold{k_{i}} }_{i=1}^{N}$ from each voxel cell. Colour of each segment ${ c_{i} }_{i=1}^N$ can be found with the spherical functions represented by the SH coefficients.</li>
+  <li>With the above quantities, apply standard volumetric rendering formula to render colour $\hat{C}(\bold{r})$ at the target pixel.</li>
+  <li>We could achieve further speedup by early stopping the ray when its accumulated transmittance $T_{i}$ is too low. The accumulated transmittance indicates the chance that the ray can pass through the first segment up to the target segments without being blocked. Points with low accumulated transmittance have negligible impact to the rendered colour so we could safely skip them.</li>
+</ol>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/volumetric_render.png" alt="volumetric_render.png" title="from paper"></p>
+
+<p>The whole process is similar to that of NeRF except PlenOctree makes use of cache from its voxel cells so it can achieve significant speedup comparing against a standard NeRF.</p>
+
+<p>We can summarise the rendering process with a diagram below. $Y(.)$ is the SH functions as a vector and $\bold{k}_{i}$ are the SH coefficients associated to the $i$-th voxel cell. $c_{i}$ is its associated colour and the formula is no different from what we discussed before.</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png" alt="plenoctree_render.png"></p>
+
+<h2 id="43-fine-tuning-plenoctree">
+<a class="anchor" href="#43-fine-tuning-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.3. Fine-tuning PlenOctree</h2>
+<hr>
+<p>Since the rendering process with PlenOctree is done by standard volumetric rendering, the operation is differentiable. Therefore, we could apply stochastic gradient descent to fine-tune the PlenOctree representation. Empirical studies show that additional fine-tuning on PlenOctree could lead to significant improvement on rendering quality.</p>
+
+<p>While in principle it is feasible to train a PlenOctree representation from scratch, it usually takes much more time to converge. A trained NeRF-SH gives PlenOctree a good prior of geometry and appearance to learn from.</p>
+
+<p>We can neatly summarised the pipeline for yielding a PlenOctree representation with the following diagram extracted from the paper.</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png" alt="plenoctree_conversion.png" title="from paper"></p>
+
+<h2 id="5-experimental-results">
+<a class="anchor" href="#5-experimental-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Experimental Results</h2>
+<hr>
+<p>The authors compares both the rendering speed and quality between their approach (NeRF-SH + PlenOctree) and existing models. The rendering speed is measured by Frames per Second (FPS) and the rendering quality is measured by Peak Signal-to-Noise Ratio (PSNR).</p>
+
+<p>They experimented their approach with different settings (e.g. higher filtering threshold on accumulated transmittance, reduce grid size to 256) and found that a few of its settings (i.e. Ours-1.9G) achieved better PSNR and 3000x faster FPS against vanilla NeRF!</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/results.png" alt="results.png" title="from paper"></p>
+
+<h2 id="limitation">
+<a class="anchor" href="#limitation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitation</h2>
+<hr>
+<p>While NeRF-SH and PlenOctree achieves amazing rendering speed with comparable rendering quality against standard NeRF, it has several trade-offs.</p>
+
+<p>On one hand, it has larger memory footprint than a standard NeRF. A NeRF model is typically light-weighted with roughly ~10 MB. However, a PlenOctree representation could easily take up to ~2 GB because it caches density and SH coefficients in each voxel cell.</p>
+
+<p>On the other hand, it creates noticeable artifact when you zoom in the scene because it partitions a continuous 3D space into discrete voxel cells. The resolution is inevitably sacraficed.</p>
+
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/view_artifact.png" alt="view_artifact.png" title="from paper"></p>
+
+<h2 id="references">
+<a class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h2>
+<hr>
+
+<ol>
+  <li><a href="https://arxiv.org/abs/2103.14024">PlenOctrees for Real-time Rendering of Neural Radiance Fields</a></li>
+  <li><a href="https://www.youtube.com/watch?v=WzzCyCcqTjA">Real-time rendering of NeRFs with PlenOctrees - Angjoo Kanazawa</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/paper/computer-graphics/2022/01/26/PlenOctree-Summary.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" target="_blank" title="fastai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" target="_blank" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
