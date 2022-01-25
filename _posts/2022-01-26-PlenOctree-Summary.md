@@ -1,7 +1,7 @@
 ---
 keywords: paper
 description: "NeRF is powerful for learning a 3D scene's representation generalizable to novel views, but it suffers from slow rendering speed. This paper proposes a variant called NeRF-SH and a data structure for caching called PlenOctree. When applied together it drives significant speedup on rendering with comparable rendering quality against vanilla NeRF."
-title: "Paper Summary: 'PlenOctrees for Real-time Rendering of Neural Radiance Fields'"
+title: "Paper Summary: \"PlenOctrees for Real-time Rendering of Neural Radiance Fields\""
 toc: true 
 badges: true
 comments: true
