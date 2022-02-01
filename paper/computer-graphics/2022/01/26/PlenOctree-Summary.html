@@ -162,17 +162,17 @@ window.onload = wrap_img;
 <hr>
 <p>The authors propose NeRF-SH that models a 3D point’s colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. It enables a space-efficient way to spatially cache the colours predicted by the network (into a PlenOctree structure).</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_network.png" alt="nerf_sh_network.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_network.png" alt="nerf_sh_network.png" title="from the paper"></p>
 
 <p>We can compactly express a spherical function as coefficients of Spherical Harmonics $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, where $k_{l}^{m}$ is 3-dimensional for describing the 3 channels of RGB colour.</p>
 
 <p>Once we yield the coefficients $(k_{l}^{m})_{l:0\leq l \leq l_{max}}^{m: -l \leq m \leq l}$, we could easily render the colour at any viewing direction by a sum of Spherical Harmonics $\bold{Y}_{l}^{m}(\theta, \phi)$ weighted by their associated $k_{l}^{m}$, followed by a sigmoid transformation $S(.)$:</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sh_to_point_colour.png" alt="sh_to_point_colour.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sh_to_point_colour.png" alt="sh_to_point_colour.png" title="from the paper"></p>
 
 <p>We can neatly summarize the pipeline for training NeRF-SH with a diagram extracted from the paper.</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_pipeline.png" alt="nerf_sh_pipeline.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_pipeline.png" alt="nerf_sh_pipeline.png" title="from the paper"></p>
 
 <h2 id="32-nerf-sh-training-with-sparsity-loss">
 <a class="anchor" href="#32-nerf-sh-training-with-sparsity-loss" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.2. NeRF-SH: Training with Sparsity Loss</h2>
@@ -181,11 +181,11 @@ window.onload = wrap_img;
 
 <p>To encourage NeRF-SH to predict unused region to be empty, a sparsity loss is additionally enforced. To evaluate the loss, we uniformly sample $K$ points within a bounding box and consider their associated densities $\sigma_{k}$. High density leads to high sparsity loss.</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sparsity_loss.png" alt="sparsity_loss.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/sparsity_loss.png" alt="sparsity_loss.png" title="from the paper"></p>
 
 <p>With sparsity loss enforced, the unused region can be effectively pruned away from PlenOctree thanks to their negligible densities. As a result, it leads to a tighter bound on a 3D scene and hence a higher spatial resolution on PlenOctree representation (because voxel cells are mostly distributed to the important region).</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/compare_wo_sparsity_loss.png" alt="compare_wo_sparsity_loss.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/compare_wo_sparsity_loss.png" alt="compare_wo_sparsity_loss.png" title="from the paper"></p>
 
 <h2 id="41-conversion-to-plenoctree">
 <a class="anchor" href="#41-conversion-to-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.1. Conversion to PlenOctree</h2>
@@ -213,7 +213,7 @@ window.onload = wrap_img;
   <li>We could achieve further speedup by early stopping the ray when its accumulated transmittance $T_{i}$ is too low. The accumulated transmittance indicates the chance that the ray can pass through the first segment up to the target segments without being blocked. Points with low accumulated transmittance have negligible impact to the rendered colour so we could safely skip them.</li>
 </ol>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/volumetric_render.png" alt="volumetric_render.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/volumetric_render.png" alt="volumetric_render.png" title="from the paper"></p>
 
 <p>The whole process is similar to that of NeRF except PlenOctree makes use of cache from its voxel cells so it can achieve significant speedup comparing against a standard NeRF.</p>
 
@@ -230,7 +230,7 @@ window.onload = wrap_img;
 
 <p>We can neatly summarised the pipeline for yielding a PlenOctree representation with the following diagram extracted from the paper.</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png" alt="plenoctree_conversion.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png" alt="plenoctree_conversion.png" title="from the paper"></p>
 
 <h2 id="5-experimental-results">
 <a class="anchor" href="#5-experimental-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Experimental Results</h2>
@@ -239,7 +239,7 @@ window.onload = wrap_img;
 
 <p>They experimented their approach with different settings (e.g. higher filtering threshold on accumulated transmittance, reduce grid size to 256) and found that a few of its settings (i.e. Ours-1.9G) achieved better PSNR and 3000x faster FPS against vanilla NeRF!</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/results.png" alt="results.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/results.png" alt="results.png" title="from the paper"></p>
 
 <h2 id="limitation">
 <a class="anchor" href="#limitation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitation</h2>
@@ -250,7 +250,7 @@ window.onload = wrap_img;
 
 <p>On the other hand, it creates noticeable artifact when you zoom in the scene because it partitions a continuous 3D space into discrete voxel cells. The resolution is inevitably sacraficed.</p>
 
-<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/view_artifact.png" alt="view_artifact.png" title="from paper"></p>
+<p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/view_artifact.png" alt="view_artifact.png" title="from the paper"></p>
 
 <h2 id="references">
 <a class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h2>
