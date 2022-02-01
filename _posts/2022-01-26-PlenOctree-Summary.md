@@ -109,7 +109,7 @@ They experimented their approach with different settings (e.g. higher filtering 
 ![results.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/results.png "from the paper")
 
 
-## Limitation
+## 6. Limitations
 ---
 While NeRF-SH and PlenOctree achieves amazing rendering speed with comparable rendering quality against standard NeRF, it has several trade-offs.
 
@@ -119,7 +119,7 @@ On the other hand, it creates noticeable artifact when you zoom in the scene bec
 
 ![view_artifact.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/view_artifact.png "from the paper")
 
-## References
+## 7. References
 ---
 
 1. [PlenOctrees for Real-time Rendering of Neural Radiance Fields](https://arxiv.org/abs/2103.14024)
