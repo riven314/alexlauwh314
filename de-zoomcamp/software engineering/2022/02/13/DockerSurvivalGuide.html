@@ -20,7 +20,7 @@
 <meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png" />
 <meta property="twitter:title" content="Survival Guide for Docker &amp; Docker Compose" />
 <script type="application/ld+json">
-{"url":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html","@type":"BlogPosting","headline":"Survival Guide for Docker &amp; Docker Compose","dateModified":"2022-02-13T00:00:00-06:00","datePublished":"2022-02-13T00:00:00-06:00","image":"https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html"},"description":"You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started.","@context":"https://schema.org"}</script>
+{"url":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png","headline":"Survival Guide for Docker &amp; Docker Compose","dateModified":"2022-02-13T00:00:00-06:00","datePublished":"2022-02-13T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html"},"description":"You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started.","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="fastpages" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -141,7 +141,7 @@ window.onload = wrap_img;
 
 <h2 id="2-essential-docker-commands"><strong>2. Essential Docker Commands</strong></h2>
 <hr />
-<h4 id="docker-run-image-nametag-command"><code class="language-plaintext highlighter-rouge">docker run &lt;image-name&gt;:&lt;tag&gt; &lt;command&gt;</code></h4>
+<h4 id="docker-run-image-nametag-command"><strong><code class="language-plaintext highlighter-rouge">docker run &lt;image-name&gt;:&lt;tag&gt; &lt;command&gt;</code></strong></h4>
 
 <p>The command does the following in order:</p>
 <ol>
@@ -225,7 +225,7 @@ table th:nth-of-type(2) {
   <li><code class="language-plaintext highlighter-rouge">docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -p 5432:5432 postgres:13</code>: spin off a container from <code class="language-plaintext highlighter-rouge">postgres:13</code> image and set 3 environment variables for the postgres database in the container. additionally the container exposes its port <code class="language-plaintext highlighter-rouge">5432</code> to local host’s port <code class="language-plaintext highlighter-rouge">5432</code>. then the container starts postgres server and we attach to the associated session.</li>
 </ul>
 
-<h4 id="docker-container-ls"><code class="language-plaintext highlighter-rouge">docker container ls</code></h4>
+<h4 id="docker-container-ls"><strong><code class="language-plaintext highlighter-rouge">docker container ls</code></strong></h4>
 
 <p>This command lists out attributes for each container, by default it lists out running containers only. It is equivalent to <code class="language-plaintext highlighter-rouge">docker ps</code>.</p>
 
@@ -270,7 +270,7 @@ table th:nth-of-type(2) {
   <li><code class="language-plaintext highlighter-rouge">docker container ls --all --filter "ancestor=ubuntu" --filter "ancestor=python:3.8 --filter "label=version=1.3" -q</code>: print out ID of all containers whose image is <code class="language-plaintext highlighter-rouge">ubuntu:latest</code> OR whose image is <code class="language-plaintext highlighter-rouge">python:3.8</code> OR whose meta labels contain key <code class="language-plaintext highlighter-rouge">version</code> of value <code class="language-plaintext highlighter-rouge">1.3</code>.</li>
 </ul>
 
-<h4 id="docker-container-inspect-container-id"><code class="language-plaintext highlighter-rouge">docker container inspect &lt;container-id&gt;</code></h4>
+<h4 id="docker-container-inspect-container-id"><strong><code class="language-plaintext highlighter-rouge">docker container inspect &lt;container-id&gt;</code></strong></h4>
 
 <p>You can pass one or more container names/ IDs to the command and it returns all metadata associated to those containers</p>
 
@@ -302,10 +302,12 @@ table th:nth-of-type(2) {
   <li><code class="language-plaintext highlighter-rouge">docker inspect --size --format "{{.ID}} {{.Config.Image}} {{.SizeRootFs}} {{.NetworkSettings.Networks.bridge.IPAddress}}" $(docker ps -a -q)</code> : print out all containers’ IDs, associated image names, file sizes (in bytes) and IP addresses. you can’t access <code class="language-plaintext highlighter-rouge">SizeRootFs</code> attribute without <code class="language-plaintext highlighter-rouge">--size</code> flag</li>
 </ul>
 
-<h4 id="docker-exec-container-id-command"><code class="language-plaintext highlighter-rouge">docker exec &lt;container-id&gt; &lt;command&gt;</code></h4>
+<h4 id="docker-exec-container-id-command"><strong><code class="language-plaintext highlighter-rouge">docker exec &lt;container-id&gt; &lt;command&gt;</code></strong></h4>
 <p>Execute a command <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code> in a running container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code></p>
 
 <p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/docker_exec.png" alt="docker_exec.png" /></p>
+
+<p><strong>Highlighted Flags</strong></p>
 
 <table>
   <thead>
@@ -370,7 +372,7 @@ e.g. <code class="language-plaintext highlighter-rouge">docker rm $(docker conta
 
 <p>The workflow for creating and running a custom image is straight forward. You start by writing your own <code class="language-plaintext highlighter-rouge">Dockerfile</code>. The file contains all configurations required to set up your container (e.g. commands to install required depencies, mounting, commands to start up the service … etc.). Once the <code class="language-plaintext highlighter-rouge">Dockerfile</code> is ready, you can build a custom image from your <code class="language-plaintext highlighter-rouge">Dockerfile</code>, and then spin off containers from it.</p>
 
-<p>![docker pipeline](/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/dockerfile.jpeg “extracted from <a href="https://br.pinterest.com/pin/326511041717099391/?amp_client_id=CLIENT_ID(_)&amp;mweb_unauth_id=%7B%7Bdefault.session%7D%7D&amp;simplified=true">Pinterest</a>)</p>
+<p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/dockerfile.jpeg" alt="docker pipeline" title="extracted from Pinterest" /></p>
 
 <p><strong>Step 1: Configure Your <code class="language-plaintext highlighter-rouge">Dockerfile</code></strong></p>
 
