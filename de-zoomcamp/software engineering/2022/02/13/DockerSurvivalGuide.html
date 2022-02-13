@@ -455,26 +455,26 @@ e.g. <code class="language-plaintext highlighter-rouge">docker rm $(docker conta
 
 <p><strong>Step 1: Configure Your <code class="language-plaintext highlighter-rouge">docker-compose.yml</code></strong></p>
 
-<p><code class="language-plaintext highlighter-rouge">docker-compose.yml</code> defines all configurations you want to set for each service. Note that unlike <code class="language-plaintext highlighter-rouge">docker run</code>, we don’t need to specify absolute path in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.</p>
+<p><code class="language-plaintext highlighter-rouge">docker-compose.yml</code> defines all configurations you want to set for each service. Note that unlike <code class="language-plaintext highlighter-rouge">docker run</code>, we can use relative path in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.</p>
 
 <div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>services:
-	pgdatabase:
-		image: postgres:13
-		environment:
-			- POSTGRES_USER=root
-			- POSTGRES_PASSWORD=root
-			- POSTGRES_DB=ny_taxi
-		volumes:
-			- "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
-		ports:
-			- "5432:5432"
-	pgadmin:
-		image: dpage/pgadmin4
-		environment:
-			- PGADMIN_DEFAULT_EMAIL=admin@gmail.com
-			- PGADMIN_DEFAULT_PASSWORD=root
-		ports:
-			- "8080:80"
+  pgdatabase:
+    image: postgres:13
+	environment:
+	  - POSTGRES_USER=root
+	  - POSTGRES_PASSWORD=root
+	  - POSTGRES_DB=ny_taxi
+	volumes:
+	  - "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
+	ports:
+	  - "5432:5432"
+  pgadmin:
+	image: dpage/pgadmin4
+	environment:
+	  - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+	  - PGADMIN_DEFAULT_PASSWORD=root
+	ports:
+	  - "8080:80"
 </code></pre></div></div>
 
 <p><strong>Step 2: Bring Up Containers</strong></p>
