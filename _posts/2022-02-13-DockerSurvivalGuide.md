@@ -22,7 +22,7 @@ This is originally a note for [Data Engineering Zoomcamp](https://github.com/Dat
 
 ## **2. Essential Docker Commands**
 ---
-#### `docker run <image-name>:<tag> <command>`
+#### **`docker run <image-name>:<tag> <command>`**
 
 The command does the following in order:
 1. look up target image `<image-name>` of specified tag `<tag>` locally, otherwise download it from Docker Hub  
@@ -67,7 +67,7 @@ table th:nth-of-type(2) {
 - `docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -p 5432:5432 postgres:13`: spin off a container from `postgres:13` image and set 3 environment variables for the postgres database in the container. additionally the container exposes its port `5432` to local host's port `5432`. then the container starts postgres server and we attach to the associated session.
 
 
-#### `docker container ls`
+#### **`docker container ls`**
 
 This command lists out attributes for each container, by default it lists out running containers only. It is equivalent to `docker ps`.
 
@@ -88,7 +88,7 @@ This command lists out attributes for each container, by default it lists out ru
 - `docker container ls --all --filter "ancestor=ubuntu" --filter "ancestor=python:3.8 --filter "label=version=1.3" -q`: print out ID of all containers whose image is `ubuntu:latest` OR whose image is `python:3.8` OR whose meta labels contain key `version` of value `1.3`.
 
 
-#### `docker container inspect <container-id>`
+#### **`docker container inspect <container-id>`**
 
 You can pass one or more container names/ IDs to the command and it returns all metadata associated to those containers
 
@@ -104,10 +104,12 @@ You can pass one or more container names/ IDs to the command and it returns all 
 **Examples**
 - {% raw %} `docker inspect --size --format "{{.ID}} {{.Config.Image}} {{.SizeRootFs}} {{.NetworkSettings.Networks.bridge.IPAddress}}" $(docker ps -a -q)` {% endraw %}: print out all containers' IDs, associated image names, file sizes (in bytes) and IP addresses. you can't access `SizeRootFs` attribute without `--size` flag
 
-#### `docker exec <container-id> <command>`
+#### **`docker exec <container-id> <command>`**
 Execute a command `<command>` in a running container `<container-id>`
 
 ![docker_exec.png]({{ site.baseurl }}/images/2022-02-13-DockerSurvivalGuide/docker_exec.png)
+
+**Highlighted Flags**
 
 | Flag | Description |
 | --- | --- |
@@ -147,7 +149,7 @@ Sometimes you may want to containerisze your own service. If you don't find any 
 The workflow for creating and running a custom image is straight forward. You start by writing your own `Dockerfile`. The file contains all configurations required to set up your container (e.g. commands to install required depencies, mounting, commands to start up the service ... etc.). Once the `Dockerfile` is ready, you can build a custom image from your `Dockerfile`, and then spin off containers from it.
 
 
-![docker pipeline]({{ site.baseurl }}/images/2022-02-13-DockerSurvivalGuide/dockerfile.jpeg "extracted from [Pinterest](https://br.pinterest.com/pin/326511041717099391/?amp_client_id=CLIENT_ID(_)&mweb_unauth_id=%7B%7Bdefault.session%7D%7D&simplified=true))
+![docker pipeline]({{ site.baseurl }}/images/2022-02-13-DockerSurvivalGuide/dockerfile.jpeg "extracted from Pinterest")
 
 **Step 1: Configure Your `Dockerfile`**
 

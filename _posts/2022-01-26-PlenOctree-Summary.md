@@ -6,7 +6,7 @@ toc: true
 badges: true
 comments: true
 categories: [paper, computer-graphics]
-image: images/2022-01-26-PlenOctree-Summary/plenoctree_render.png
+image: images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png
 layout: post
 ---
 
