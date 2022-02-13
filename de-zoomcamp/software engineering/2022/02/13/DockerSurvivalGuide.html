@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Survival Guide for Docker &amp; Docker Compose | fastpages</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Survival Guide for Docker &amp; Docker Compose" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started." />
+<meta property="og:description" content="You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html" />
+<meta property="og:site_name" content="fastpages" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-02-13T00:00:00-06:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png" />
+<meta property="twitter:title" content="Survival Guide for Docker &amp; Docker Compose" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html","@type":"BlogPosting","headline":"Survival Guide for Docker &amp; Docker Compose","dateModified":"2022-02-13T00:00:00-06:00","datePublished":"2022-02-13T00:00:00-06:00","image":"https://riven314.github.io/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html"},"description":"You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="fastpages" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">fastpages</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Survival Guide for Docker &amp; Docker Compose</h1><p class="page-description">You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-02-13T00:00:00-06:00" itemprop="datePublished">
+        Feb 13, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#de-zoomcamp">de-zoomcamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#software engineering">software engineering</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/cover.png" alt="cover_from_webbylab.png" title="extracted from WebbyLab" /></p>
+
+<h2 id="1-who-should-read-this"><strong>1. Who Should Read This?</strong></h2>
+<hr />
+<p>You probably know what Docker is and how they are commonly used in practice, but are looking for a quick guide to navigate through the jungle. This article summarises the basics in Docker and Docker Compose to help you get started.</p>
+
+<p>This is originally a note for <a href="https://github.com/DataTalksClub/data-engineering-zoomcamp">Data Engineering Zoomcamp</a> lesson 1, and over time I expanded it with additional references. Now I decided to package it as a stand-alone survival guide with a hope to help those in my situation, who intend to quickly get themselves up for this amazing tools.</p>
+
+<h2 id="2-essential-docker-commands"><strong>2. Essential Docker Commands</strong></h2>
+<hr />
+<h4 id="docker-run-image-nametag-command"><code class="language-plaintext highlighter-rouge">docker run &lt;image-name&gt;:&lt;tag&gt; &lt;command&gt;</code></h4>
+
+<p>The command does the following in order:</p>
+<ol>
+  <li>look up target image <code class="language-plaintext highlighter-rouge">&lt;image-name&gt;</code> of specified tag <code class="language-plaintext highlighter-rouge">&lt;tag&gt;</code> locally, otherwise download it from Docker Hub<br />
+(if <code class="language-plaintext highlighter-rouge">&lt;tag&gt;</code> is not specified, it assumes the tag to be <code class="language-plaintext highlighter-rouge">latest</code>)</li>
+  <li>spin off a container from the downloaded image</li>
+  <li>execute <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code> in the running container, if provided</li>
+  <li>gracefully stop the container after the <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code> finishes</li>
+</ol>
+
+<p>Remarks:</p>
+<ul>
+  <li>each execution of the command spins off independent container</li>
+  <li>absolute path should be used if a path is needed in <code class="language-plaintext highlighter-rouge">docker run</code></li>
+</ul>
+
+<p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/docker_run.png" alt="docker_run.png" /></p>
+
+<p><strong>Highlighted Flags</strong></p>
+<style>
+table th:first-of-type {
+    width: 20%;
+}
+table th:nth-of-type(2) {
+    width: 80%;
+}
+</style>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--detach</code> (or <code class="language-plaintext highlighter-rouge">-d</code>)</td>
+      <td>run the container in background</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--rm</code></td>
+      <td>delete the container at the end of the command. useful if you intend to run the container once only</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--name</code></td>
+      <td>specify a name to your container. useful for inter-container communication because other containers could address your container by its name instead of its IP address.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--env</code> (or <code class="language-plaintext highlighter-rouge">-e</code>)</td>
+      <td>set an environment variable in the container. useful when the service to be containerized requires environment variables, repeatedly add <code class="language-plaintext highlighter-rouge">--env</code> for multiple environment variables.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-it</code></td>
+      <td>attach to the session in the container at the end and enable you to interact with the session, useful when you have appended command and it</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--label</code> (or <code class="language-plaintext highlighter-rouge">-l</code>)</td>
+      <td>add a meta label to the container. it’s useful if you want to group containers by labels, same as <code class="language-plaintext highlighter-rouge">--env</code> you can repeatedly add <code class="language-plaintext highlighter-rouge">--label</code> for multiple meta labels</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--volume</code> (or <code class="language-plaintext highlighter-rouge">-v</code>)</td>
+      <td>mount a directory in localhost to a directory in the container <br /> e.g. <code class="language-plaintext highlighter-rouge">--volume &lt;local-directory&gt;:&lt;container-directory&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--expose</code> (or <code class="language-plaintext highlighter-rouge">-e</code>)</td>
+      <td>binds a port in local host to a port in container. useful for localhost to communicate with the containerized service <br /> e.g. <code class="language-plaintext highlighter-rouge">--expose &lt;local-port&gt;:&lt;container-port&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--entrypoint</code></td>
+      <td>run specified commands in the container, functionally similar to <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code> in this case.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Examples</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker run python:3.8 ls</code>: spin off a container from image <code class="language-plaintext highlighter-rouge">python:3.8</code> and then list the folders &amp; files at default directory of the container</li>
+  <li><code class="language-plaintext highlighter-rouge">docker run --rm -d ython:3.8 python -m http.server</code>: start a http server at default directory of a container and run the container in background (running in background is useful here, otherwise your terminal session can’t resume unless you forcefully shut down the server). upon shutting down the container, it is automatically deleted (thanks to <code class="language-plaintext highlighter-rouge">--rm</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">docker run -it ubuntu bash</code>: spin off a container from <code class="language-plaintext highlighter-rouge">ubuntu:latest</code> image. execute <code class="language-plaintext highlighter-rouge">bash</code> in the container and then attach to the associated bash session (thanks to <code class="language-plaintext highlighter-rouge">-it</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -p 5432:5432 postgres:13</code>: spin off a container from <code class="language-plaintext highlighter-rouge">postgres:13</code> image and set 3 environment variables for the postgres database in the container. additionally the container exposes its port <code class="language-plaintext highlighter-rouge">5432</code> to local host’s port <code class="language-plaintext highlighter-rouge">5432</code>. then the container starts postgres server and we attach to the associated session.</li>
+</ul>
+
+<h4 id="docker-container-ls"><code class="language-plaintext highlighter-rouge">docker container ls</code></h4>
+
+<p>This command lists out attributes for each container, by default it lists out running containers only. It is equivalent to <code class="language-plaintext highlighter-rouge">docker ps</code>.</p>
+
+<p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/docker_ls.png" alt="docker_ls.png" /></p>
+
+<p><strong>Highlighted Flags</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--filter</code> (or <code class="language-plaintext highlighter-rouge">-f</code>)</td>
+      <td>lists out containers that satisfy the specified filter. you need to specify key and (optionally) value for filtering. add multiple <code class="language-plaintext highlighter-rouge">--filter</code> flags for multiple conditions</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--all</code> (or <code class="language-plaintext highlighter-rouge">-a</code>)</td>
+      <td>lists out all containers (both stopped and running containers)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--quiet</code> (or <code class="language-plaintext highlighter-rouge">-q</code>)</td>
+      <td>returns container IDs only. particularly useful when you want to propagate a list of container ID to another command</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--format</code></td>
+      <td>customizes the attributes you want to print out for the containers.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--size</code></td>
+      <td>additionally show the file size for each containers. attribute <code class="language-plaintext highlighter-rouge">Size</code> is exposed for you to specify in <code class="language-plaintext highlighter-rouge">--format</code>. it is set as an additional flag because it is costly to query file size for each container.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Examples</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker container ls --all ---size --format "ID:{{.ID}} Image:{{.Image}} Size:{{.Size}}"</code> : print out all containers’ IDs, image names and file sizes. note that  <code class="language-plaintext highlighter-rouge">{{.Size}}</code>  is only accessible with <code class="language-plaintext highlighter-rouge">--size</code> flag</li>
+  <li><code class="language-plaintext highlighter-rouge">docker container ls --all --filter "ancestor=ubuntu" --filter "ancestor=python:3.8 --filter "label=version=1.3" -q</code>: print out ID of all containers whose image is <code class="language-plaintext highlighter-rouge">ubuntu:latest</code> OR whose image is <code class="language-plaintext highlighter-rouge">python:3.8</code> OR whose meta labels contain key <code class="language-plaintext highlighter-rouge">version</code> of value <code class="language-plaintext highlighter-rouge">1.3</code>.</li>
+</ul>
+
+<h4 id="docker-container-inspect-container-id"><code class="language-plaintext highlighter-rouge">docker container inspect &lt;container-id&gt;</code></h4>
+
+<p>You can pass one or more container names/ IDs to the command and it returns all metadata associated to those containers</p>
+
+<p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/docker_inspect.png" alt="docker_inspect.png" /></p>
+
+<p><strong>Highlighted Flags</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--format</code> (or <code class="language-plaintext highlighter-rouge">-f</code>)</td>
+      <td>functionally similar to <code class="language-plaintext highlighter-rouge">--format</code> from <code class="language-plaintext highlighter-rouge">docker container ls</code>, except you can access more attributes here. <br /> (e.g. <code class="language-plaintext highlighter-rouge">NetworkSettings.Networks.bridge.IPAddress</code> for container’s IP address)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--size</code></td>
+      <td>additionally expose attribute <code class="language-plaintext highlighter-rouge">SizeRootFs</code> in the metadata. it expresses container’s file size in bytes.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Examples</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker inspect --size --format "{{.ID}} {{.Config.Image}} {{.SizeRootFs}} {{.NetworkSettings.Networks.bridge.IPAddress}}" $(docker ps -a -q)</code> : print out all containers’ IDs, associated image names, file sizes (in bytes) and IP addresses. you can’t access <code class="language-plaintext highlighter-rouge">SizeRootFs</code> attribute without <code class="language-plaintext highlighter-rouge">--size</code> flag</li>
+</ul>
+
+<h4 id="docker-exec-container-id-command"><code class="language-plaintext highlighter-rouge">docker exec &lt;container-id&gt; &lt;command&gt;</code></h4>
+<p>Execute a command <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code> in a running container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code></p>
+
+<p><img src="/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/docker_exec.png" alt="docker_exec.png" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flag</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--it</code></td>
+      <td>attach to and interact with the session in the container after the command execution <br /> adasdasds</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--user</code> (or <code class="language-plaintext highlighter-rouge">-u</code>)</td>
+      <td>execute the command as a specified user (username or UID)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Examples</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker exec -it -u 0 &lt;container-id&gt; bash</code>: initiate a bash session as root user (UID 0) in a running container as root user</li>
+  <li><code class="language-plaintext highlighter-rouge">docker exec &lt;container-id&gt; pwd</code>: print out the default directory of a running container</li>
+</ul>
+
+<h3 id="some-other-useful-docker-commands"><strong>Some Other Useful Docker Commands</strong></h3>
+<h4 id="docker-start-container-id"><code class="language-plaintext highlighter-rouge">docker start &lt;container-id&gt;</code></h4>
+<blockquote>
+  <p>activate a stopped container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code> to run again</p>
+</blockquote>
+
+<h4 id="docker-stop-container-id"><code class="language-plaintext highlighter-rouge">docker stop &lt;container-id&gt;</code></h4>
+<blockquote>
+  <p>gracefully shut down a running container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code></p>
+</blockquote>
+
+<h4 id="docker-kill-container-id"><code class="language-plaintext highlighter-rouge">docker kill &lt;container-id&gt;</code></h4>
+<blockquote>
+  <p>forcefully shut down a running container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code></p>
+</blockquote>
+
+<h4 id="docker-logs-container-id"><code class="language-plaintext highlighter-rouge">docker logs &lt;container-id&gt;</code></h4>
+<blockquote>
+  <p>fetch the latest logs from <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code>’s terminal for the command that it is running</p>
+</blockquote>
+
+<h4 id="docker-cp-src-path-container-iddest-path"><code class="language-plaintext highlighter-rouge">docker cp &lt;src-path&gt; &lt;container-id&gt;:&lt;dest-path&gt;</code></h4>
+<blockquote>
+  <p>transfer file from local host <code class="language-plaintext highlighter-rouge">&lt;src-path&gt;</code> to a directory in container <code class="language-plaintext highlighter-rouge">&lt;dest-path&gt;</code>. to transfer a file from container to local host, use <code class="language-plaintext highlighter-rouge">docker cp &lt;container-id&gt;:&lt;src-path&gt; &lt;dest-path&gt;</code> instead</p>
+</blockquote>
+
+<h4 id="docker-container-rm-container-id"><code class="language-plaintext highlighter-rouge">docker container rm &lt;container-id&gt;</code></h4>
+<blockquote>
+  <p>Delete the stopped container <code class="language-plaintext highlighter-rouge">&lt;container-id&gt;</code>. add <code class="language-plaintext highlighter-rouge">--force</code> (or <code class="language-plaintext highlighter-rouge">-f</code>) to forcefully stop a running container and then delete it.<br />
+e.g. <code class="language-plaintext highlighter-rouge">docker rm $(docker container ls --all --filter "ancestor=ubuntu" --quiet)</code> deletes all containers from the image <code class="language-plaintext highlighter-rouge">ubuntu:latest</code></p>
+</blockquote>
+
+<h2 id="3-customise-your-image-with-dockerfile"><strong>3. Customise Your Image with <code class="language-plaintext highlighter-rouge">Dockerfile</code></strong></h2>
+<hr />
+<p>Sometimes you may want to containerisze your own service. If you don’t find any base images from Docker Hub with all required dependencies pre-intsalled, you can create your custom image.</p>
+
+<p>The workflow for creating and running a custom image is straight forward. You start by writing your own <code class="language-plaintext highlighter-rouge">Dockerfile</code>. The file contains all configurations required to set up your container (e.g. commands to install required depencies, mounting, commands to start up the service … etc.). Once the <code class="language-plaintext highlighter-rouge">Dockerfile</code> is ready, you can build a custom image from your <code class="language-plaintext highlighter-rouge">Dockerfile</code>, and then spin off containers from it.</p>
+
+<p>![docker pipeline](/alexlauwh314/images/2022-02-13-DockerSurvivalGuide/dockerfile.jpeg “extracted from <a href="https://br.pinterest.com/pin/326511041717099391/?amp_client_id=CLIENT_ID(_)&amp;mweb_unauth_id=%7B%7Bdefault.session%7D%7D&amp;simplified=true">Pinterest</a>)</p>
+
+<p><strong>Step 1: Configure Your <code class="language-plaintext highlighter-rouge">Dockerfile</code></strong></p>
+
+<p>Here are the instructions you can specified in <code class="language-plaintext highlighter-rouge">Dockerfile</code> (some have their equivalent flags from <code class="language-plaintext highlighter-rouge">docker run</code>). Note that you can access environment variables by <code class="language-plaintext highlighter-rouge">$&lt;env_var&gt;</code> (or <code class="language-plaintext highlighter-rouge">$(&lt;env_var&gt;)</code>) in <code class="language-plaintext highlighter-rouge">Dockerfile</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Instruction</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">FROM</code></td>
+      <td>base image that you want to build upon, you can specify a specific tag for the image <br /> (e.g. <code class="language-plaintext highlighter-rouge">FROM python:3.8</code>)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">RUN</code></td>
+      <td>command you want to run in the container, usually for commands that install dependencies <br /> (e.g. <code class="language-plaintext highlighter-rouge">RUN pip install -r requirements.txt</code>)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">WORKDIR</code></td>
+      <td>set a working directory for any instructions that follow. if relative path is used, it will be relative to the <code class="language-plaintext highlighter-rouge">WORKDIR</code> from latest instruction</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">COPY</code></td>
+      <td>copy files or directory from local host to the container</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">LABEL</code></td>
+      <td>attach meta label to the contaienr, equivalent to <code class="language-plaintext highlighter-rouge">--label</code> (or <code class="language-plaintext highlighter-rouge">-l</code>) in <code class="language-plaintext highlighter-rouge">docker run</code> <br /> (e.g. <code class="language-plaintext highlighter-rouge">LABEL version=4.4</code> equivalent to <code class="language-plaintext highlighter-rouge">docker ps --filter label=version=4.4</code>)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">ENTRYPOINT</code></td>
+      <td>default command you call in the container. it can’t be override by <code class="language-plaintext highlighter-rouge">docker run</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">CMD</code></td>
+      <td>default command you call in the container, it can be overriden by the command appended to <code class="language-plaintext highlighter-rouge">docker run</code>. <br /> additionally when used with <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code>, it serves as parameters to the command from <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Here is an example for containerizing a data pipeline written in a Python script.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> sample-image:sample-tag</span>
+
+<span class="k">RUN </span>pip <span class="nb">install </span>pandas
+<span class="k">WORKDIR</span><span class="s"> /working_dir</span>
+<span class="k">WORKDIR</span><span class="s"> working_subdir</span>
+<span class="k">COPY</span><span class="s"> pipeline.py pipeline.py</span>
+<span class="k">LABEL</span><span class="s"> version="1.3"</span>
+<span class="k">LABEL</span><span class="s"> create_date="2022-02-01"</span>
+
+<span class="k">ENTRYPOINT</span><span class="s"> ["python", "pipeline.py"]</span>
+<span class="k">CMD</span><span class="s"> ["2022-02-01"]</span>
+</code></pre></div></div>
+
+<p><strong>Step 2: Build an image from your <code class="language-plaintext highlighter-rouge">Dockerfile</code></strong></p>
+
+<p>Build a custom image of name <code class="language-plaintext highlighter-rouge">&lt;image-name&gt;</code> with tag <code class="language-plaintext highlighter-rouge">&lt;tag&gt;</code> from your <code class="language-plaintext highlighter-rouge">Dockerfile</code>:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> &lt;image-name&gt;:&lt;tag&gt; <span class="nb">.</span>
+</code></pre></div></div>
+<ul>
+  <li>note that rerunning the command overwrites the previous image</li>
+  <li><code class="language-plaintext highlighter-rouge">.</code> means reading <code class="language-plaintext highlighter-rouge">Dockerfile</code> in current directory</li>
+  <li>to check the image has been successfully built, do <code class="language-plaintext highlighter-rouge">docker images</code> to list out available images</li>
+</ul>
+
+<p><strong>Step 3: Fire off a container from your built image</strong></p>
+
+<p>Once the image is built, you can spin off a container from it:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run &lt;image-name&gt;:&lt;tag&gt;
+</code></pre></div></div>
+
+<h2 id="4-manage-your-containers-easily-with-docker-compose"><strong>4. Manage Your Containers Easily with Docker Compose</strong></h2>
+<hr />
+
+<p>Sometimes it could be a pain to manage a group of containers with manual commands. Docker Compose is a tool to simplify the process. You can configure the services in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> file, and then you can easily manage them (e.g. build images, spin off/ stop containers) with <code class="language-plaintext highlighter-rouge">docker-compose</code> commands.</p>
+
+<p>Let’s say you want to separately containerize a Postgres server and a pgAdmin server (GUI tool for interacting with Postgres database). On top of that, the containerized pgAdmin should be able to connect with the containerized Postgres server and our local host should be able to access the containerized pgAdmin GUI. You can do the steps below to manage the containers.</p>
+
+<p><strong>Step 1: Configure Your <code class="language-plaintext highlighter-rouge">docker-compose.yml</code></strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">docker-compose.yml</code> defines all configurations you want to set for each service. Note that unlike <code class="language-plaintext highlighter-rouge">docker run</code>, we don’t need to specify absolute path in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>services:
+	pgdatabase:
+		image: postgres:13
+		environment:
+			- POSTGRES_USER=root
+			- POSTGRES_PASSWORD=root
+			- POSTGRES_DB=ny_taxi
+		volumes:
+			- "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
+		ports:
+			- "5432:5432"
+	pgadmin:
+		image: dpage/pgadmin4
+		environment:
+			- PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+			- PGADMIN_DEFAULT_PASSWORD=root
+		ports:
+			- "8080:80"
+</code></pre></div></div>
+
+<p><strong>Step 2: Bring Up Containers</strong></p>
+
+<p>Once <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> is ready, you can run the following command in the same directory to bring up the containers. The command builds custom image and spin off container for each service:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up
+</code></pre></div></div>
+<ul>
+  <li>similar to <code class="language-plaintext highlighter-rouge">docker run</code>, you can attach <code class="language-plaintext highlighter-rouge">--detach</code> (or <code class="language-plaintext highlighter-rouge">-d</code>) for running the group of containers in detached mode</li>
+  <li>by default a custom bridge network will be created for the group of containers to enable inter-container communication by IP address or name resolution</li>
+  <li>unlike <code class="language-plaintext highlighter-rouge">docker build</code>, rerunning <code class="language-plaintext highlighter-rouge">docker-compose up</code> doesn’t rebuild an image even with updated <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code></li>
+  <li>to reflect your change in <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>, you can either:
+    <ul>
+      <li>apply <code class="language-plaintext highlighter-rouge">docker-compose up --build</code> to enforce re-building, or equivalently</li>
+      <li>apply <code class="language-plaintext highlighter-rouge">docker-compose build</code> before <code class="language-plaintext highlighter-rouge">docker-compose up</code></li>
+    </ul>
+  </li>
+  <li>note that the container’s name will have additional prefix and suffix on top of what you specify in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>. the prefix is based on the name of the folder that you run <code class="language-plaintext highlighter-rouge">docker-compose up</code>. you can override the prefix by the flag <code class="language-plaintext highlighter-rouge">--project-name</code> or <code class="language-plaintext highlighter-rouge">-p</code> (i.e. <code class="language-plaintext highlighter-rouge">docker-compose --project-name &lt;some-prefix&gt; up</code>)</li>
+</ul>
+
+<p><strong>Step 3: Bring Down Containers</strong></p>
+
+<p>Finally you can bring down what you have brought up from <code class="language-plaintext highlighter-rouge">docker-compose up</code> by:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose down
+</code></pre></div></div>
+<ul>
+  <li>not only it shuts down the containers, it will also remove the associated custom bridge network and the containers</li>
+  <li>in case there are residual containers remained, you can apply <code class="language-plaintext highlighter-rouge">docker-compose rm</code> in the same directory to erase them</li>
+</ul>
+
+<h2 id="5-references"><strong>5. References</strong></h2>
+<hr />
+<ol>
+  <li><a href="https://www.youtube.com/watch?v=EYNwNlOrpr0&amp;list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb">Youtube: DE Zoomcamp 1.2.1 - Introduction to Docker</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/commandline/run/">Docker Documentation: docker run</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/commandline/container_ls/">Docker Documentation: docker container ls</a></li>
+  <li><a href="https://github.com/moby/moby/issues/24295">Github Issue: Docker PS filter by ancestor image does not match tagged images if image tag is omitted from filter · Issue #24295 · moby/moby</a></li>
+  <li><a href="https://www.youtube.com/watch?v=4I8CRAzPLD4">Youtube: Manage Docker Easily With VS Code</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/de-zoomcamp/software%20engineering/2022/02/13/DockerSurvivalGuide.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" target="_blank" title="fastai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" target="_blank" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
