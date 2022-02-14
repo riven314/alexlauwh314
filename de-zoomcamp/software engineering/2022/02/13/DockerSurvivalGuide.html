@@ -453,6 +453,8 @@ e.g. <code class="language-plaintext highlighter-rouge">docker rm $(docker conta
 
 <p>Sometimes it could be a pain to manage a group of containers with manual commands. Docker Compose is a tool to simplify the process. You can configure the services in <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> file, and then you can easily manage them (e.g. build images, spin off/ stop containers) with <code class="language-plaintext highlighter-rouge">docker-compose</code> commands.</p>
 
+<p>As a side note, Kubernetes (aka k8s) is another popular alternative. It supports automatic deployment, scaling and management of containerized services. However, k8s is beyond the scope of this guide.</p>
+
 <p>Let’s say you want to separately containerize a Postgres server and a pgAdmin server (GUI tool for interacting with Postgres database). On top of that, the containerized pgAdmin should be able to connect with the containerized Postgres server and our local host should be able to access the containerized pgAdmin GUI. You can do the steps below to manage the containers.</p>
 
 <p><strong>Step 1: Configure Your <code class="language-plaintext highlighter-rouge">docker-compose.yml</code></strong></p>
