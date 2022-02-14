@@ -204,7 +204,7 @@ Sometimes it could be a pain to manage a group of containers with manual command
 
 As a side note, Kubernetes (aka k8s) is another popular alternative. It supports automatic deployment, scaling and management of containerized services. However, k8s is beyond the scope of this guide.
 
-Let's say you want to separately containerize a Postgres server and a pgAdmin server (GUI tool for interacting with Postgres database). On top of that, the containerized pgAdmin should be able to connect with the containerized Postgres server and our local host should be able to access the containerized pgAdmin GUI. You can do the steps below to manage the containers.
+Let's say you want to package a Postgres server and a pgAdmin server (GUI tool for interacting with Postgres database) as separate containers. On top of that, the containerized pgAdmin should be able to connect with the containerized Postgres server and the containerized pgAdmin GUI should be accessible from local host. You can do the steps below to manage the containers.
 
 
 **Step 1: Configure Your `docker-compose.yml`**
