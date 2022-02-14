@@ -56,7 +56,7 @@ table th:nth-of-type(2) {
 | `-it` | attach to the session in the container at the end and enable you to interact with the session, useful when you have appended command and it |
 | `--label` (or `-l`) | add a meta label to the container. it’s useful if you want to group containers by labels, same as `--env` you can repeatedly add `--label` for multiple meta labels |
 | `--volume` (or `-v`) | mount a directory in localhost to a directory in the container <br/> e.g. `--volume <local-directory>:<container-directory>` |
-| `--expose` (or `-e`) | binds a port in local host to a port in container. useful for localhost to communicate with the containerized service <br/> e.g. `--expose <local-port>:<container-port>` |
+| `--expose` (or `-p`) | binds a port in local host to a port in container. useful for localhost to communicate with the containerized service <br/> e.g. `--expose <local-port>:<container-port>` |
 | `--entrypoint` | run specified commands in the container, functionally similar to `<command>` in this case. |
 
 
