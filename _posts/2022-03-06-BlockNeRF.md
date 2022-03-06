@@ -6,7 +6,7 @@ toc: true
 badges: true
 comments: true
 categories: [paper, computer-graphics]
-image: images/2022-03-06-BlockNeRF/grace_cathedral.gif
+image: images/2022-03-06-BlockNeRF/cover.png
 layout: post
 ---
 
