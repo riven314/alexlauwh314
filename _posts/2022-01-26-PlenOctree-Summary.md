@@ -12,7 +12,7 @@ layout: post
 
 ![cover.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/cover.png)
 
-## 1. Motivations
+## **1. Motivations**
 ---
 Neural Radiance Field (NeRF) has gained traction in academia thanks to its power to render novel 2D views of a 3D scene trained on the posed images. However NeRF's rendering speed is noticeably slow. Without a GPU accelerator, it could easily take more than 1 minute to render a 2D view. Such drawback blocks its application on latency-sensitive domain. 
 
@@ -20,7 +20,7 @@ It is slow becaues numerous network calls have to be made for rendering even one
 - Invent an efficient data structure called PlenOctrees to spatially cache the outputs from a trained NeRF
 - Introduce a variant of NeRF (NeRF-SH) that is easily convertible into PlenOctree representation
 
-## 2. Introduction to Spherical Harmonics
+## **2. Introduction to Spherical Harmonics**
 ---
 Spherical Harmonics (SH) is a critical concept behind their proposal. Shperical Harmonics is a collections of spherical functions used to describe the surface of some special spheres. 
 
@@ -36,7 +36,7 @@ Additionally it provides a compact way to represent any spherical functions. We 
 
 How could we apply this concept to NeRF? Recall that NeRF describes the geometry (i.e. density $\sigma$) and appearance (i.e. RGB colour $\bold{c}$) of any 3D point $\bold{x}$ in a 3D scene at any viewing direction $\bold{d}$. While a 3D point's density is invariant of your viewing direction, its colour varies with your viewing angle. Therefore, we can treat the colour exactly like spherical function, except that we need 3 independent real-valued spherical functions to do so because we need 3 channels (red, green and blue) to describe a RGB colour.
 
-## 3.1. NeRF-SH: Linking Spherical Harmonics to NeRF
+## **3.1. NeRF-SH: Linking Spherical Harmonics to NeRF**
 ---
 The authors propose NeRF-SH that models a 3D point's colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. It enables a space-efficient way to spatially cache the colours predicted by the network (into a PlenOctree structure).
 
@@ -52,7 +52,7 @@ We can neatly summarize the pipeline for training NeRF-SH with a diagram extract
 
 ![nerf_sh_pipeline.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/nerf_sh_pipeline.png "from the paper")
 
-## 3.2. NeRF-SH: Training with Sparsity Loss
+## **3.2. NeRF-SH: Training with Sparsity Loss**
 ---
 There is an additional caveat for the training: when solely supervised by standard reconstruction loss during training, NeRF-SH tends to predict arbitrary geometry on unused region. Although it doesn’t hurt the rendering quality but it occupies a lot of redundant space when NeRF-SH is converted into PlenOctree.
 
@@ -65,7 +65,7 @@ With sparsity loss enforced, the unused region can be effectively pruned away fr
 ![compare_wo_sparsity_loss.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/compare_wo_sparsity_loss.png "from the paper")
 
 
-## 4.1. Conversion to PlenOctree
+## **4.1. Conversion to PlenOctree**
 ---
 Once NeRF-SH is trained, we can easily converted it into a PlenOctree representation with the following procedures:
 
@@ -73,7 +73,7 @@ Once NeRF-SH is trained, we can easily converted it into a PlenOctree representa
 2. **Filtering:** Partition the grid points into different voxel cells. Render all training views and keep track of the maximum ray weight $1-exp(-\sigma\_{i} \delta\_{i})$ in each voxel cell, where $\delta\_{i}$ is the distance between sample points along a ray (more details in next session). Cell with low ray weight implies it is likely an empty space with negligible contribution to any training views so we can safely prune them.
 3. **Sampling:** To determine the SH coefficients for each voxel cell, we randomly sample 256 points within a voxel cells and take an average of their associated SH coefficients.
 
-## 4.2. Rendering with PlenOctree
+## **4.2. Rendering with PlenOctree**
 ---
 With the converted PlenOctree, we could easily achieve blazingly fast rendering speed with the following procedures:
 
@@ -90,7 +90,7 @@ We can summarise the rendering process with a diagram below. $Y(.)$ is the SH fu
 
 ![plenoctree_render.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png)
 
-## 4.3. Fine-tuning PlenOctree
+## **4.3. Fine-tuning PlenOctree**
 ---
 Since the rendering process with PlenOctree is done by standard volumetric rendering, the operation is differentiable. Therefore, we could apply stochastic gradient descent to fine-tune the PlenOctree representation. Empirical studies show that additional fine-tuning on PlenOctree could lead to significant improvement on rendering quality.
 
@@ -100,7 +100,7 @@ We can neatly summarised the pipeline for yielding a PlenOctree representation w
 
 ![plenoctree_conversion.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png "from the paper")
 
-## 5. Experimental Results
+## **5. Experimental Results**
 ---
 The authors compares both the rendering speed and quality between their approach (NeRF-SH + PlenOctree) and existing models. The rendering speed is measured by Frames per Second (FPS) and the rendering quality is measured by Peak Signal-to-Noise Ratio (PSNR).
 
@@ -109,7 +109,7 @@ They experimented their approach with different settings (e.g. higher filtering 
 ![results.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/results.png "from the paper")
 
 
-## 6. Limitations
+## **6. Limitations**
 ---
 While NeRF-SH and PlenOctree achieves amazing rendering speed with comparable rendering quality against standard NeRF, it has several trade-offs.
 
@@ -119,7 +119,7 @@ On the other hand, it creates noticeable artifact when you zoom in the scene bec
 
 ![view_artifact.png]({{ site.baseurl }}/images/2022-01-26-PlenOctree-Summary/view_artifact.png "from the paper")
 
-## 7. References
+## **7. References**
 ---
 
 1. [PlenOctrees for Real-time Rendering of Neural Radiance Fields](https://arxiv.org/abs/2103.14024)
