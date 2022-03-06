@@ -18,9 +18,9 @@ BlockNeRF has recently taken the Twitter's ML community by storm. Intrigued by i
 
 {% include twitter.html content='<a href="https://twitter.com/ak92501/status/1491956886748368897">https://twitter.com/ak92501/status/1491956886748368897</a>' %}
 
-BlockNeRF extends NeRF to reconstruct realistic city map at large scale. It is jointly developed by Google and Waymo. This is not the first work studying scalable scenes with NeRF. To name a few, MegaNeRF is designed to reconstruct wild landscape with drone data, and CityNeRF reconstructs map in city scale. Having said that, BlockNeRF is the first work applying NeRF on automonous driving.
+Jointly developed by Google and Waymo, BlockNeRF extends NeRF to reconstruct realistic city map at large scale. This is not the first work on scalable scenes with NeRF. To name a few, MegaNeRF reconstructs wild landscape with drone data, and CityNeRF reconstructs map in city scale. However, BlockNeRF is the first work applying NeRF on automonous driving.
 
-How does BlockNeRF help with automonous driving? Automonous vehicles requires sheer volume of driving scenarios for training but collecting them first hand at scale is expensive. As an alternative, researchers actively explore the possibility to simulate realistic driving scenes with deep learning models. One proposal is to simulate scenes from a virtual world (just imagine the scenes you see in GTA). However, it is undesirable because the simulated scenes are neither representative to reality nor diverse. On the contrary, BlockNeRF is capable to simulate realistic driving scenes with huge varierty (e.g. different weathers, different times, different exposures).
+How does BlockNeRF help with automonous driving? Automonous vehicles requires sheer volume of driving scenarios for training but collecting them first hand at scale is expensive. As an alternative, researchers actively explore the possibility to simulate realistic driving scenes with deep learning models. One proposal is to simulate scenes from a virtual world (just imagine the scenes you see in GTA). However, it is undesirable because the simulated scenes are neither representative to reality nor diverse. On the contrary, BlockNeRF is capable to simulate realistic driving scenes with huge varierty.
 
 
 ## **2. An Overview of BlockNeRF's Architecture**
@@ -100,9 +100,13 @@ We could quantify the visibility of a place by its transmittance. It tells the c
 
 How to compute transmittance with the visibility network? Let's say we are at position $\bold{o}$ viewing at direction $\bold{d}$, we can march a ray from our viewpoint and parameterise it as $\bold{r}(t) = \bold{o} + t \bold{d}$, where $t$ describes the distance from the viewpoint. Then we can collect discrete samples along distances $\\{ t\_k \\}\_{k=1}^{N}$ and evaluate their respective densities $\\{ \sigma\_k \\}\_{k=1}^{N}$ with the visibility network. With the quantities, we can numerically approximate the transmittance at distance $t\_{i}$ by:
 
-$
-T\_{i} = \exp(-\sum\_{j<i} \delta\_{j} \sigma\_{j}), \hspace{8 mm} \delta\_{l} = t\_{l} - t\_{l-1}
-$
+$$
+\begin{split}
+
+T_{i} = \exp(-\sum_{j<i} \delta_{j} \sigma_{j}), \hspace{8 mm} \delta_{l} = t_{l} - t_{l-1}
+
+\end{split}
+$$
 
 
 Compared against $f\_{\sigma}$ and $f\_{\bold{c}}$, visibility network $f\_{v}$ is light-weight to efficiently query across blocks. It deploys the same Integrated Positional Encoding trick to capture positional information.
@@ -130,13 +134,13 @@ To make the views more consistent, we can blend the views rendered by several bl
 
 After these 2 simple filtering, 1-3 blocks remain for final blending. We can blend them together by interpolation. We use inverse distance weighting to determine the weight of each view:
 
-$
+$$
 \begin{split}
 
-w\_{i} = \text{distance}(c, x\_{i})^{-p}
+w_{i} = \text{distance}(c, x_{i})^{-p}
 
 \end{split}
-$
+$$
 
 $c$ is the viewpoint's coordinate and $x_{i}$ is the coordinate of the block's center. $p$ is a paramter that controls the rate of blending. The authors experimented different distance measures and interpolation methods. They conclude that 2D Inverse Distance Weighting (IDW 2D) yields that best results in terms of temporal consistency.
 
@@ -181,6 +185,8 @@ Here BlockNeRF animates a driving view at Moscone Center (San Francisco). You ca
 Below is the same trick. BlockNeRF transits Downtown (San Francisco) from dawn to morning by interpolation of the learned appearance embeddings.
 
 ![appearance_animation.gif]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/appearance_animation.gif)
+
+BlockNeRF can offer diverse driving scenarios because it is easily extensible and you can control both the exposure level and the appearance of a scene from model inputs.
 
 ## **5. Limitations**
 ---
