@@ -20,7 +20,7 @@ BlockNeRF has recently taken the Twitter's ML community by storm. Intrigued by i
 
 Jointly developed by Google and Waymo, BlockNeRF extends NeRF to reconstruct realistic city map at large scale. This is not the first work on scalable scenes with NeRF. To name a few, MegaNeRF reconstructs wild landscape with drone data, and CityNeRF reconstructs map in city scale. However, BlockNeRF is the first work applying NeRF on automonous driving.
 
-How does BlockNeRF help with automonous driving? Automonous vehicles requires sheer volume of driving scenarios for training but collecting them first hand at scale is expensive. As an alternative, researchers actively explore the possibility to simulate realistic driving scenes with deep learning models. One proposal is to simulate scenes from a virtual world (just imagine the scenes you see in GTA). However, it is undesirable because the simulated scenes are neither representative to reality nor diverse. On the contrary, BlockNeRF is capable to simulate realistic driving scenes with huge varierty.
+How does BlockNeRF help with automonous driving? Automonous vehicles requires sheer volume of driving scenarios for training but collecting them first hand at scale is expensive. As an alternative, researchers actively explore the possibility to simulate realistic driving scenes with deep learning models. One proposal is to simulate scenes from a virtual world (just imagine the scenes you see in GTA). However, it is undesirable because the simulated scenes are neither representative to reality nor diverse. On the contrary, BlockNeRF is capable to simulate realistic driving scenes with huge variety.
 
 
 ## **2. An Overview of BlockNeRF's Architecture**
