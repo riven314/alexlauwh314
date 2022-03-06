@@ -10,13 +10,13 @@ image: images/2022-03-06-BlockNeRF/grace_cathedral.gif
 layout: post
 ---
 
-![grace_cathedral.gif]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/grace_cathedral.gif)
+![dawn_scene.png]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/dawn_scene.png)
 
 ## **1. Motivations**
 ---
 BlockNeRF has recently taken the Twitter's ML community by storm. Intrigued by its amazing demo of realistic driving views at different landmarks, I am hooked to read its paper. 
 
-> twitter: https://twitter.com/ak92501/status/1491956886748368897
+{% include twitter.html content='<a href="https://twitter.com/ak92501/status/1491956886748368897">https://twitter.com/ak92501/status/1491956886748368897</a>' %}
 
 BlockNeRF extends NeRF to reconstruct realistic city map at large scale. It is jointly developed by Google and Waymo. This is not the first work studying scalable scenes with NeRF. To name a few, MegaNeRF is designed to reconstruct wild landscape with drone data, and CityNeRF reconstructs map in city scale. Having said that, BlockNeRF is the first work applying NeRF on automonous driving.
 
