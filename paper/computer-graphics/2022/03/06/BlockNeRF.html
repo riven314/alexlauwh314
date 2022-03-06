@@ -239,7 +239,7 @@ Besides exposure level, training images are also subject to environmental variat
 
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/different_appearance.png" alt="different_appearance.png"></p>
 
-<p>Therefore, the authors apply a technique called appearance embedding. They introduce an auxiliary latent vector as an input to the network in order to describe the variations. Each image is assigned a latent vector and it helps explain away the variation of appearance specific to the image. Once learned, we can render novel views with any of these latent vectors to control appearance. Want to render a novel view with a night view like image A? Just append its associated latent vector when rendering!</p>
+<p>Therefore, the authors apply a technique called <strong>Appearance Embedding</strong> (borrowed from <a href="https://arxiv.org/abs/2008.02268">NeRF in the Wild</a>). They introduce an auxiliary latent vector as an input to the network in order to describe the variations. Each image is assigned a latent vector and it helps explain away the variation of appearance specific to the image. Once learned, we can render novel views with any of these latent vectors to control appearance. Want to render a novel view with a night view like image A? Just append its associated latent vector when rendering!</p>
 
 <p>The latent vectors are optimised alongside with the network through a technique called <a href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization</a>. You can treat it as an additional optimisation independently applied on each latent vector, with an objective to minimise the reconstruction loss against its associated image.</p>
 
@@ -270,6 +270,8 @@ T_{i} = \exp(-\sum_{j&lt;i} \delta_{j} \sigma_{j}), \hspace{8 mm} \delta_{l} = t
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/pedestrians.png" alt="pedestrians.png"></p>
 
 <p>To address transient objects, we could bound their belonging regions with a pretrained semantic segmentation model, and then exclude the regions from the supervision. Recall that NeRF is supervised by minimising reconstruction loss between ground-truth pixels and rendered ones. Removing pixels associated to transient objects help eliminate inconsistent signals to NeRF.</p>
+
+<p>As a remark, this trick is also borrowed from <a href="https://arxiv.org/abs/2008.02268">NeRF in the Wild</a>!</p>
 
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/masking.png" alt="masking.png"></p>
 
