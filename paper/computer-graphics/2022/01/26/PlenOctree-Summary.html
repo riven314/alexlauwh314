@@ -145,7 +145,8 @@ window.onload = wrap_img;
 </ul><p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/cover.png" alt="cover.png"></p>
 
 <h2 id="1-motivations">
-<a class="anchor" href="#1-motivations" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Motivations</h2>
+<a class="anchor" href="#1-motivations" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>1. Motivations</strong>
+</h2>
 <hr>
 <p>Neural Radiance Field (NeRF) has gained traction in academia thanks to its power to render novel 2D views of a 3D scene trained on the posed images. However NeRF’s rendering speed is noticeably slow. Without a GPU accelerator, it could easily take more than 1 minute to render a 2D view. Such drawback blocks its application on latency-sensitive domain.</p>
 
@@ -156,7 +157,8 @@ window.onload = wrap_img;
 </ul>
 
 <h2 id="2-introduction-to-spherical-harmonics">
-<a class="anchor" href="#2-introduction-to-spherical-harmonics" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Introduction to Spherical Harmonics</h2>
+<a class="anchor" href="#2-introduction-to-spherical-harmonics" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2. Introduction to Spherical Harmonics</strong>
+</h2>
 <hr>
 <p>Spherical Harmonics (SH) is a critical concept behind their proposal. Shperical Harmonics is a collections of spherical functions used to describe the surface of some special spheres.</p>
 
@@ -173,7 +175,8 @@ window.onload = wrap_img;
 <p>How could we apply this concept to NeRF? Recall that NeRF describes the geometry (i.e. density $\sigma$) and appearance (i.e. RGB colour $\bold{c}$) of any 3D point $\bold{x}$ in a 3D scene at any viewing direction $\bold{d}$. While a 3D point’s density is invariant of your viewing direction, its colour varies with your viewing angle. Therefore, we can treat the colour exactly like spherical function, except that we need 3 independent real-valued spherical functions to do so because we need 3 channels (red, green and blue) to describe a RGB colour.</p>
 
 <h2 id="31-nerf-sh-linking-spherical-harmonics-to-nerf">
-<a class="anchor" href="#31-nerf-sh-linking-spherical-harmonics-to-nerf" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1. NeRF-SH: Linking Spherical Harmonics to NeRF</h2>
+<a class="anchor" href="#31-nerf-sh-linking-spherical-harmonics-to-nerf" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.1. NeRF-SH: Linking Spherical Harmonics to NeRF</strong>
+</h2>
 <hr>
 <p>The authors propose NeRF-SH that models a 3D point’s colour as spherical fucntions. NeRF-SH receives a 3D point $\bold{x}$ as input and predicts its density $\sigma$ the same way as vanilla NeRF does. But instead of predicting its RGB colour for a single viewing direction, NeRF-SH predicts spherical functions that describes the colours at all viewing direction. This modification helps factor out viewing direction from the network input. It enables a space-efficient way to spatially cache the colours predicted by the network (into a PlenOctree structure).</p>
 
@@ -190,7 +193,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/nerf_sh_pipeline.png" alt="nerf_sh_pipeline.png" title="from the paper"></p>
 
 <h2 id="32-nerf-sh-training-with-sparsity-loss">
-<a class="anchor" href="#32-nerf-sh-training-with-sparsity-loss" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.2. NeRF-SH: Training with Sparsity Loss</h2>
+<a class="anchor" href="#32-nerf-sh-training-with-sparsity-loss" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.2. NeRF-SH: Training with Sparsity Loss</strong>
+</h2>
 <hr>
 <p>There is an additional caveat for the training: when solely supervised by standard reconstruction loss during training, NeRF-SH tends to predict arbitrary geometry on unused region. Although it doesn’t hurt the rendering quality but it occupies a lot of redundant space when NeRF-SH is converted into PlenOctree.</p>
 
@@ -203,7 +207,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/compare_wo_sparsity_loss.png" alt="compare_wo_sparsity_loss.png" title="from the paper"></p>
 
 <h2 id="41-conversion-to-plenoctree">
-<a class="anchor" href="#41-conversion-to-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.1. Conversion to PlenOctree</h2>
+<a class="anchor" href="#41-conversion-to-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4.1. Conversion to PlenOctree</strong>
+</h2>
 <hr>
 <p>Once NeRF-SH is trained, we can easily converted it into a PlenOctree representation with the following procedures:</p>
 
@@ -217,7 +222,8 @@ window.onload = wrap_img;
 </ol>
 
 <h2 id="42-rendering-with-plenoctree">
-<a class="anchor" href="#42-rendering-with-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.2. Rendering with PlenOctree</h2>
+<a class="anchor" href="#42-rendering-with-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4.2. Rendering with PlenOctree</strong>
+</h2>
 <hr>
 <p>With the converted PlenOctree, we could easily achieve blazingly fast rendering speed with the following procedures:</p>
 
@@ -237,7 +243,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_render.png" alt="plenoctree_render.png"></p>
 
 <h2 id="43-fine-tuning-plenoctree">
-<a class="anchor" href="#43-fine-tuning-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.3. Fine-tuning PlenOctree</h2>
+<a class="anchor" href="#43-fine-tuning-plenoctree" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4.3. Fine-tuning PlenOctree</strong>
+</h2>
 <hr>
 <p>Since the rendering process with PlenOctree is done by standard volumetric rendering, the operation is differentiable. Therefore, we could apply stochastic gradient descent to fine-tune the PlenOctree representation. Empirical studies show that additional fine-tuning on PlenOctree could lead to significant improvement on rendering quality.</p>
 
@@ -248,7 +255,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/plenoctree_conversion.png" alt="plenoctree_conversion.png" title="from the paper"></p>
 
 <h2 id="5-experimental-results">
-<a class="anchor" href="#5-experimental-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Experimental Results</h2>
+<a class="anchor" href="#5-experimental-results" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5. Experimental Results</strong>
+</h2>
 <hr>
 <p>The authors compares both the rendering speed and quality between their approach (NeRF-SH + PlenOctree) and existing models. The rendering speed is measured by Frames per Second (FPS) and the rendering quality is measured by Peak Signal-to-Noise Ratio (PSNR).</p>
 
@@ -257,7 +265,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/results.png" alt="results.png" title="from the paper"></p>
 
 <h2 id="6-limitations">
-<a class="anchor" href="#6-limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Limitations</h2>
+<a class="anchor" href="#6-limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>6. Limitations</strong>
+</h2>
 <hr>
 <p>While NeRF-SH and PlenOctree achieves amazing rendering speed with comparable rendering quality against standard NeRF, it has several trade-offs.</p>
 
@@ -268,7 +277,8 @@ window.onload = wrap_img;
 <p><img src="/alexlauwh314/images/2022-01-26-PlenOctree-Summary/view_artifact.png" alt="view_artifact.png" title="from the paper"></p>
 
 <h2 id="7-references">
-<a class="anchor" href="#7-references" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. References</h2>
+<a class="anchor" href="#7-references" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>7. References</strong>
+</h2>
 <hr>
 
 <ol>

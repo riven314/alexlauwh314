@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Paper Summary: “BlockNeRF: Scalable Large Scene Neural View Synthesis” | Document My Data Science Journey</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Paper Summary: “BlockNeRF: Scalable Large Scene Neural View Synthesis”" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<meta property="og:description" content="An easy to use blogging platform with support for Jupyter Notebooks." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/06/BlockNeRF.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/06/BlockNeRF.html" />
+<meta property="og:site_name" content="Document My Data Science Journey" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-06-BlockNeRF/grace_cathedral.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-06T00:00:00-06:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-06-BlockNeRF/grace_cathedral.gif" />
+<meta property="twitter:title" content="Paper Summary: “BlockNeRF: Scalable Large Scene Neural View Synthesis”" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/06/BlockNeRF.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-03-06-BlockNeRF/grace_cathedral.gif","headline":"Paper Summary: “BlockNeRF: Scalable Large Scene Neural View Synthesis”","dateModified":"2022-03-06T00:00:00-06:00","datePublished":"2022-03-06T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/06/BlockNeRF.html"},"description":"An easy to use blogging platform with support for Jupyter Notebooks.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">Document My Data Science Journey</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Paper Summary: &quot;BlockNeRF: Scalable Large Scene Neural View Synthesis&quot;</h1><p class="page-description"></p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-06T00:00:00-06:00" itemprop="datePublished">
+        Mar 6, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#paper">paper</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#computer-graphics">computer-graphics</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#1-motivations">1. Motivations</a></li>
+<li class="toc-entry toc-h2"><a href="#2-an-overview-of-blocknerfs-architecture">2. An Overview of BlockNeRF’s Architecture</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#21-segregating-sub-networks-f_sigma-and-f_boldc">2.1. Segregating Sub-networks $f_{\sigma}$ and $f_{\bold{c}}$</a></li>
+<li class="toc-entry toc-h3"><a href="#211-density-prediction-by-f_sigma">2.1.1. Density Prediction by $f_{\sigma}$</a></li>
+<li class="toc-entry toc-h3"><a href="#212-colour-prediction-by-f_boldc">2.1.2. Colour Prediction by $f_{\bold{c}}$</a></li>
+<li class="toc-entry toc-h3"><a href="#22-visibility-prediction-by-f_v">2.2. Visibility Prediction by $f_{v}$</a></li>
+<li class="toc-entry toc-h3"><a href="#23-masking-out-transient-objects">2.3. Masking Out Transient Objects</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#3-orchestrating-the-blocks">3. Orchestrating the Blocks</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#31-composing-blocks-for-rendering">3.1. Composing Blocks for Rendering</a></li>
+<li class="toc-entry toc-h3"><a href="#32-aligning-appearance-across-blocks">3.2. Aligning Appearance Across Blocks</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#4-results">4. Results</a></li>
+<li class="toc-entry toc-h2"><a href="#5-limitations">5. Limitations</a></li>
+<li class="toc-entry toc-h2"><a href="#6-references">6. References</a></li>
+</ul><p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/grace_cathedral.gif" alt="grace_cathedral.gif"></p>
+
+<h2 id="1-motivations">
+<a class="anchor" href="#1-motivations" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>1. Motivations</strong>
+</h2>
+<hr>
+<p>BlockNeRF has recently taken the Twitter’s ML community by storm. Intrigued by its amazing demo of realistic driving views at different landmarks, I am hooked to read its paper.</p>
+
+<blockquote>
+  <p>twitter: https://twitter.com/ak92501/status/1491956886748368897</p>
+</blockquote>
+
+<p>BlockNeRF extends NeRF to reconstruct realistic city map at large scale. It is jointly developed by Google and Waymo. This is not the first work studying scalable scenes with NeRF. To name a few, MegaNeRF is designed to reconstruct wild landscape with drone data, and CityNeRF reconstructs map in city scale. Having said that, BlockNeRF is the first work applying NeRF on automonous driving.</p>
+
+<p>How does BlockNeRF help with automonous driving? Automonous vehicles requires sheer volume of driving scenarios for training but collecting them first hand at scale is expensive. As an alternative, researchers actively explore the possibility to simulate realistic driving scenes with deep learning models. One proposal is to simulate scenes from a virtual world (just imagine the scenes you see in GTA). However, it is undesirable because the simulated scenes are neither representative to reality nor diverse. On the contrary, BlockNeRF is capable to simulate realistic driving scenes with huge varierty (e.g. different weathers, different times, different exposures).</p>
+
+<h2 id="2-an-overview-of-blocknerfs-architecture">
+<a class="anchor" href="#2-an-overview-of-blocknerfs-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2. An Overview of BlockNeRF’s Architecture</strong>
+</h2>
+<hr>
+
+<p>BlockNeRF is a variant of <a href="https://arxiv.org/abs/2003.08934">Neural Radiance Field network (aka NeRF)</a>. As a very brief introduction, NeRF learns to reconstruct a 3D scene from its 2D views and their associated viewpoints. We can treat a scene as a bounded volume and NeRF describes the density $\sigma$ and RGB colour $\bold{c}$ of any position in the space. Once trained, NeRF can project the 3D scene into 2D image at any viewpoints. It deploys a classical technique called volumetric rendering to render each pixel by tracing rays from the viewpoint to the scene.</p>
+
+<p>I will highlight some key techniques by BlockNeRF, together with its architecture. Due to limited space, I will spare their nitty gritty details. Below diagram best summarises BlockNeRF’s design and I will explain each component in the following sessions.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/model_diagram.png" alt="model_diagram.png"></p>
+
+<h3 id="21-segregating-sub-networks-f_sigma-and-f_boldc">
+<a class="anchor" href="#21-segregating-sub-networks-f_sigma-and-f_boldc" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.1. Segregating Sub-networks $f_{\sigma}$ and $f_{\bold{c}}$</strong>
+</h3>
+
+<p>BlockNeRF divides a gigantic scene into blocks and then conquer each block with an individual NeRF network. But unlike standard NeRF, it segregates the prediction of density and colour into 2 different sub-networks, namely $f_{\sigma}$ and $f_{\bold{c}}$.</p>
+
+<h3 id="211-density-prediction-by-f_sigma">
+<a class="anchor" href="#211-density-prediction-by-f_sigma" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.1.1. Density Prediction by $f_{\sigma}$</strong>
+</h3>
+
+<p>The 1st sub-network $f_{\sigma}$ predicts the density $\sigma$ at position $\bold{x}$. The sub-network only requires position as input because geometry only depends on space. No matter how you view the same position at different angles or at varying lighting conditions, its geometry should be the same. Besides $\sigma$, the sub-network $f_{\sigma}$ spits out a high-dimensional embedding, to be consumed by the 2nd sub-network $f_{\bold{c}}$.</p>
+
+<p>One technique worth highlighting is <strong>Integrated Positional Encoding</strong> (borrowed from <a href="https://arxiv.org/abs/2103.13415">Mip-NeRF</a>). When rendering a pixel’s colour, standard NeRF treats a position as a point sampled from a beam of traced ray. Such setting makes NeRF unaware of its distance from the viewpoint because the same point yields the same feature no matter where you look at it. The consequence is a degraded rendering quality when NeRF has to render views in a wide range of scales (e.g. extreme close/ distant shot of the scene).</p>
+
+<p>Instead of treating position as a point from a beam of ray, we can treat it as a conical frustum from a cone of rays. As a result, the network can reason about the distance of a position from the viewpoint based on the shape and size of the conical frustum. The same position traced from a further viewpoint should yield a larger conical frustum, illustrated below:</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/conical_frustum.png" alt="conical_frustum.png"></p>
+
+<p>Such reframing implies that we have to treat $\bold{x}$ as a sample randomly drawn from a distribution resembling the conical frustum. Simulate $\bold{x}$ probabilistically would make the computation intractable, so we can featurize $\bold{x}$ by its expectation instead. To further simplify the setting, we can approximate ithe ill-shaped volumetric distribution by a nice-shaped multivariate Gaussian distribution. Such approximatation gives us a closed form on expected $\bold{x}$ transformed by positional encoding, aka $\mathbb{E}(\gamma(\bold{x}))$.</p>
+
+<p>Since this post aims to explain the concept in an intuitive way so I will omit the exact formula of the closed form in this post. As a remark, this technique is called Integrated Positional Encoding because an expectation is no different from an integration (over a probability distribution).</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/mip_nerf.png" alt="mip_nerf.png"></p>
+
+<h3 id="212-colour-prediction-by-f_boldc">
+<a class="anchor" href="#212-colour-prediction-by-f_boldc" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.1.2. Colour Prediction by $f_{\bold{c}}$</strong>
+</h3>
+
+<p>The 2nd sub-network $f_{\bold{c}}$ predicts the RGB colour. Unlike density, colour requires more than position to describe. Here I list out factors that $f_{\bold{c}}$ considers:</p>
+
+<p><span style="color:blue"><strong>Factor 1: Spatial Position</strong></span><br>
+It is trivial to say that a scene has different colours at different positions. We make use of the embedding emitted from $f_{\sigma}$ to featurise this spatial information. As a recap of $f_{\sigma}$, the embedding featurises the position as a volume instead of a point, so $f_{\bold{c}}$ shares the same advantage as $f_{\sigma}$ to be aware of its distance from the viewer.</p>
+
+<p><span style="color:blue"><strong>Factor 2: Viewing Direction</strong></span><br>
+Depending on light source, an object’s surface has different brightness at different angles, hence difference in colours. We can tell a surface’s brightness from its illuminance - a technical term to measure the amount of lights spreading over a surface area. We can use unit vector $\bold{d}$ to capture the direction where we look at a point.</p>
+
+<p><span style="color:blue"><strong>Factor 3: Exposure Level of a Camera</strong></span><br>
+Exposure describes the amount of lights exposed to a camera’s film. High exposure leads to a bright view while low exposure leads to a dim view. Below diagram contrasts the same view at different exposure levels:</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/exposure_level.png" alt="exposure_level.png"></p>
+
+<p>Exposure level is mainly controlled by shutter speed - a measurement of time when camera’s shutter opens for light to come in. High shutter speed captures sparse light and results in sharp image, while low shutter speed captures dense lights and results in blurry motion. Training images are collected in the wild so it is subject to a wide range of exposure levels. Conditioning $f_{\bold{c}}$ on exposure level helps it account for the variation.</p>
+
+<p>BlockNeRF parameterises exposure level by shutter speed and 2 additional scaling factors: analog gain and $t$. It is further transformed by positional encoding with 4 levels, i.e. $\gamma_{4}(.)$.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.2500em" columnalign="right" columnspacing=""><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mtext>Exposure</mtext><mo>=</mo><msub><mi>γ</mi><mn>4</mn></msub><mo stretchy="false">(</mo><mtext>shutter speed</mtext><mo>×</mo><mtext>analog gain</mtext><mi mathvariant="normal">/</mi><mi>t</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{split}
+
+\text{Exposure} = \gamma_{4}(\text{shutter speed} \times \text{analog gain}/t)
+
+\end{split}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.5000000000000002em;vertical-align:-0.5000000000000002em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1em;"><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Exposure</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05556em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">4</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord text"><span class="mord">shutter speed</span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord text"><span class="mord">analog gain</span></span><span class="mord">/</span><span class="mord mathnormal">t</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5000000000000002em;"><span></span></span></span></span></span></span></span></span></span></span></span>
+
+<p><span style="color:blue"><strong>Factor 4: Environmetal and Photometric Variations</strong></span><br>
+Besides exposure level, training images are also subject to environmental variations (e.g. change in day of time/ weather) and photometric variations (e.g. different photographic visual effects). These variations could break standard NeRF because we could have training images of different appearances even at the same viewpoint (e.g. imagine day view v.s. night view). Such inconsistency confuses standard NeRF because it assumes the scene is static and controlled so same viewpoint should lead to same appearance</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/different_appearance.png" alt="different_appearance.png"></p>
+
+<p>Therefore, the authors apply a technique called appearance embedding. They introduce an auxiliary latent vector as an input to the network in order to describe the variations. Each image is assigned a latent vector and it helps explain away the variation of appearance specific to the image. Once learned, we can render novel views with any of these latent vectors to control appearance. Want to render a novel view with a night view like image A? Just append its associated latent vector when rendering!</p>
+
+<p>The latent vectors are optimised alongside with the network through a technique called <a href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization</a>. You can treat it as an additional optimisation independently applied on each latent vector, with an objective to minimise the reconstruction loss against its associated image.</p>
+
+<h3 id="22-visibility-prediction-by-f_v">
+<a class="anchor" href="#22-visibility-prediction-by-f_v" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.2. Visibility Prediction by $f_{v}$</strong>
+</h3>
+
+<p>Besides blocks of NeRF, we have a visibility network $f_v$ to holistically scan through the scene. It is inefficient to query all blocks when rendering, so visibility network helps filter blocks that gives material contributions. It evaluates how visible a place is from a viewpoint. If most places of the block are not visible from the viewpoint, then we can safely discard the block for rendering.</p>
+
+<p>We could quantify the visibility of a place by its transmittance. It tells the chance of a ray passing from a viewpoint to the place. The densities along the way influence the transmittance because the ray may get blocked during its travel. Transmittance of close to 1 means high transparency along the way, close to 0 means it is likely blocked by solid particles along the way.</p>
+
+<p>How to compute transmittance with the visibility network? Let’s say we are at position $\bold{o}$ viewing at direction $\bold{d}$, we can march a ray from our viewpoint and parameterise it as $\bold{r}(t) = \bold{o} + t \bold{d}$, where $t$ describes the distance from the viewpoint. Then we can collect discrete samples along distances $\{ t_k \}_{k=1}^{N}$ and evaluate their respective densities $\{ \sigma_k \}_{k=1}^{N}$ with the visibility network. With the quantities, we can numerically approximate the transmittance at distance $t_{i}$ by:</p>
+
+<p>$
+\begin{split}</p>
+
+<p>T_{i} = \exp(-\sum_{j&lt;i} \delta_{j} \sigma_{j}), \hspace{8 mm} \delta_{l} = t_{l} - t_{l-1}</p>
+
+<p>\end{split}
+$</p>
+
+<p>Compared against $f_{\sigma}$ and $f_{\bold{c}}$, visibility network $f_{v}$ is light-weight to efficiently query across blocks. It deploys the same Integrated Positional Encoding trick to capture positional information.</p>
+
+<h3 id="23-masking-out-transient-objects">
+<a class="anchor" href="#23-masking-out-transient-objects" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.3. Masking Out Transient Objects</strong>
+</h3>
+
+<p>BlockNeRF targets to model the static landscape of the scene, but transient objects (e.g. pedestrians/ vehicles) in the training images obstruct its learning because their presence leads to view inconsistency. Below are examples where the same landmark have different groups of pedestrians at different time.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/pedestrians.png" alt="pedestrians.png"></p>
+
+<p>To address transient objects, we could bound their belonging regions with a pretrained semantic segmentation model, and then exclude the regions from the supervision. Recall that NeRF is supervised by minimising reconstruction loss between ground-truth pixels and rendered ones. Removing pixels associated to transient objects help eliminate inconsistent signals to NeRF.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/masking.png" alt="masking.png"></p>
+
+<h2 id="3-orchestrating-the-blocks">
+<a class="anchor" href="#3-orchestrating-the-blocks" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3. Orchestrating the Blocks</strong>
+</h2>
+<hr>
+<h3 id="31-composing-blocks-for-rendering">
+<a class="anchor" href="#31-composing-blocks-for-rendering" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.1. Composing Blocks for Rendering</strong>
+</h3>
+
+<p>Once trained, we can render any novel view with the blocks. The simplest way to render a view during inference is to look at the block nearest to the viewpoint. However, the paper shows such naive approach leads to temporal inconsistency when animating a driving views across blocks. It creates abrupt jump in appearance upon block transition.</p>
+
+<p>To make the views more consistent, we can blend the views rendered by several blocks. Doing so is computationally expensive so we can apply simple heuristics to filter relevant blocks. One simple rule is to scope the blocks within a fixed radius of the viewpoint. On top of that, we utilise visibility network $f_{v}$ to assess the overall contributions of each scoped block. We remove the block from final rendering if its average visibility (measured by transmittance) is below a certain threshold.</p>
+
+<p>After these 2 simple filtering, 1-3 blocks remain for final blending. We can blend them together by interpolation. We use inverse distance weighting to determine the weight of each view:</p>
+
+<p>$
+\begin{split}</p>
+
+<p>w_{i} = \text{distance}(c, x_{i})^{-p}</p>
+
+<p>\end{split}
+$</p>
+
+<p>$c$ is the viewpoint’s coordinate and $x_{i}$ is the coordinate of the block’s center. $p$ is a paramter that controls the rate of blending. The authors experimented different distance measures and interpolation methods. They conclude that 2D Inverse Distance Weighting (IDW 2D) yields that best results in terms of temporal consistency.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/table.png" alt="table.png"></p>
+
+<h3 id="32-aligning-appearance-across-blocks">
+<a class="anchor" href="#32-aligning-appearance-across-blocks" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.2. Aligning Appearance Across Blocks</strong>
+</h3>
+
+<p>We know we have to blend views from different blocks for rendering, but a key detail is missing: How do the views align their appearance? This is tricky because the blocks don’t share any agreement on how to decode the latent vector into appearance. Different blocks can decode the same latent vector as different appearances.</p>
+
+<p>To address this, we performs an additional optimisation to enforce the consistency of appearance across blocks. Let’s say we want to render a views with a target appearance seen in a training image, we can retrieve its associated latent vector (target latent vector) from one of the responsible blocks (target block). With the target block and target latent vector, we can do the following:</p>
+<ol>
+  <li>Freeze the target latent vector and network weights of all blocks</li>
+  <li>Select a block adjacent to the target block</li>
+  <li>Retrieve a latent vector for the adjacent block</li>
+  <li>Render a view at a place commonly seen by both target block and the adjacent block</li>
+  <li>Optimise the latent vector to close the difference between the view rendered by target block v.s. the adjacent block</li>
+</ol>
+
+<p>Note that the paper doesn’t mention how the adject block retrieves a latent vector for optimisation. My educated guess is that it works either by randomly sampling one from its learned latent vectors or initialising from scratch. Regardless of how it is retrieved, it will eventually converge towards the target appearance. And the optimisation should be fast because we only need to optimise a latent vector.</p>
+
+<p>At the beginning of the optimisation, we could expect the same view rendered by the 2 blocks have different appearances. But over the optimisation, the view rendered by the adjacent block will converge towards the target appearance, illustrated below:</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/appearance_alignment.png" alt="appearance_alignment.png"></p>
+
+<p>After that, we can propagate the same scheme of optimisation outward to other blocks. At the end all blocks have a latent vector responsible for the target appearance. Despite a perfect alignment is hard to achieve, this solution should preserve consistency on most macro attributes of the scene.</p>
+
+<p>To make the above proposal work, each block has to overlap with its neighbours. The authors configure the blocks so that any 2 adjacent blocks have at least 50% overlap.</p>
+
+<h2 id="4-results">
+<a class="anchor" href="#4-results" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4. Results</strong>
+</h2>
+<hr>
+<p>To showcase the power of BlockNeRF, the authors train BlockNeRF on 2.8 million posed images captured in San Francisco. They are collected on public roads with data collection vehicles  from June 2021 to August 2021.</p>
+
+<p>Since the training datasets are driving views collected by vehicles, so this work focuses on rendering novel driving views. The picture below cherry-picks the rendered views of different driving locations at Alamo Square (San Francisco). The pair of views on the right shows the modularity of BlockNeRF. There was a construction work undergoing on June 2021, which was completed at September 2021. If we want to update the scene with the renovated building, we only need to retrain the responsible blocks without the need to train all blocks again.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/results.png" alt="results.png"></p>
+
+<p>Here BlockNeRF animates a driving view at Moscone Center (San Francisco). You can see the night view smoothly transits to the day view thanks to the interpolation of their respective latent vectors.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/night_and_day.gif" alt="night_and_day.gif"></p>
+
+<p>Below is the same trick. BlockNeRF transits Downtown (San Francisco) from dawn to morning by interpolation of the learned appearance embeddings.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/appearance_animation.gif" alt="appearance_animation.gif"></p>
+
+<h2 id="5-limitations">
+<a class="anchor" href="#5-limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5. Limitations</strong>
+</h2>
+<hr>
+<p>The authors list out some limitations of their work at the end. Here I highlight a few:</p>
+<ul>
+  <li>Heavy computational footprint due to large scale training, hence the carbon emissions</li>
+  <li>Inability to model dynamic scenes, solving which could unlease NeRF application on robotics</li>
+  <li>Background is rendered blurry because limited blocks are used after filtering and they don’t cover most background</li>
+  <li>Slow rendering speed and long training time, issues that other NeRF variants commonly suffer</li>
+</ul>
+
+<h2 id="6-references">
+<a class="anchor" href="#6-references" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>6. References</strong>
+</h2>
+<hr>
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=BjXMXX9Pc6U">CSC2547 NeRF in the Wild Neural Radiance Fields for Unconstrained Photo Collections</a></li>
+  <li><a href="https://www.youtube.com/watch?v=EpH175PY1A0&amp;t=309s">Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields</a></li>
+  <li><a href="https://arxiv.org/abs/2202.05263">Block-NeRF: Scalable Large Scene Neural View Synthesis</a></li>
+  <li><a href="https://arxiv.org/abs/2008.02268">NeRF in the Wild: Neural Radiance Fields for Unconstrained Photo Collections</a></li>
+  <li><a href="https://arxiv.org/abs/2103.13415">Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields</a></li>
+  <li><a href="https://arxiv.org/abs/2012.05877">INeRF: Inverting Neural Radiance Fields for Pose Estimation</a></li>
+  <li><a href="https://arxiv.org/abs/1707.05776">Optimizing the Latent Space of Generative Networks</a></li>
+</ul>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/paper/computer-graphics/2022/03/06/BlockNeRF.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" target="_blank" title="fastai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" target="_blank" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
