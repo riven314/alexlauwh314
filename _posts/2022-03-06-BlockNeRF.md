@@ -1,6 +1,6 @@
 ---
 keywords: paper
-description: ""
+description: "NeRF has finally found its place in industrial application! BlockNeRF extends NeRF to reconstruct realistic city map at large scale. It effectively saves the expensive cost of data collection by simulating realistic driving views of diverse scenearios, accelerating the development of autonomous driving."
 title: "Paper Summary: \"BlockNeRF: Scalable Large Scene Neural View Synthesis\""
 toc: true 
 badges: true
@@ -101,11 +101,7 @@ We could quantify the visibility of a place by its transmittance. It tells the c
 How to compute transmittance with the visibility network? Let's say we are at position $\bold{o}$ viewing at direction $\bold{d}$, we can march a ray from our viewpoint and parameterise it as $\bold{r}(t) = \bold{o} + t \bold{d}$, where $t$ describes the distance from the viewpoint. Then we can collect discrete samples along distances $\\{ t\_k \\}\_{k=1}^{N}$ and evaluate their respective densities $\\{ \sigma\_k \\}\_{k=1}^{N}$ with the visibility network. With the quantities, we can numerically approximate the transmittance at distance $t\_{i}$ by:
 
 $
-\begin{split}
-
 T\_{i} = \exp(-\sum\_{j<i} \delta\_{j} \sigma\_{j}), \hspace{8 mm} \delta\_{l} = t\_{l} - t\_{l-1}
-
-\end{split}
 $
 
 
