@@ -177,9 +177,11 @@ window.onload = wrap_img;
 </h2>
 <hr>
 
-<p>BlockNeRF is a variant of <a href="https://arxiv.org/abs/2003.08934">Neural Radiance Field network (aka NeRF)</a>. As a very brief introduction, NeRF learns to reconstruct a 3D scene from its 2D views and their associated viewpoints. We can treat a scene as a bounded volume and NeRF describes the density $\sigma$ and RGB colour $\bold{c}$ of any position in the space. Once trained, NeRF can project the 3D scene into 2D image at any viewpoints. It deploys a classical technique called volumetric rendering to render each pixel by tracing rays from the viewpoint to the scene.</p>
+<p>BlockNeRF is a variant of <a href="https://arxiv.org/abs/2003.08934">Neural Radiance Field network (aka NeRF)</a>. As a very brief introduction, NeRF learns to reconstruct a 3D scene from its 2D views and their associated viewpoints. We can treat a scene as a bounded volume and NeRF describes the density $\sigma$ and RGB colour $\bold{c}$ of any position in the space. Once trained, NeRF can project the 3D scene into 2D image at any viewpoints. It deploys a classical technique called volumetric rendering to render each pixel by tracing a ray from the viewpoint, through the pixel, to the scene.</p>
 
-<p>I will highlight some key techniques by BlockNeRF, together with its architecture. Due to limited space, I will spare their nitty gritty details. Below diagram best summarises BlockNeRF’s design and I will explain each component in the following sessions.</p>
+<p>I will highlight some key techniques by BlockNeRF, together with its architecture. Due to limited space, I will spare their nitty gritty details.</p>
+
+<p>Below diagram best summarises BlockNeRF’s design and I will explain each component in the following sessions.</p>
 
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/model_diagram.png" alt="model_diagram.png"></p>
 
