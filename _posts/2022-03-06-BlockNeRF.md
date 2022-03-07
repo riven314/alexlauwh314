@@ -26,9 +26,11 @@ How does BlockNeRF help with automonous driving? Automonous vehicles requires sh
 ## **2. An Overview of BlockNeRF's Architecture**
 ---
 
-BlockNeRF is a variant of [Neural Radiance Field network (aka NeRF)](https://arxiv.org/abs/2003.08934). As a very brief introduction, NeRF learns to reconstruct a 3D scene from its 2D views and their associated viewpoints. We can treat a scene as a bounded volume and NeRF describes the density $\sigma$ and RGB colour $\bold{c}$ of any position in the space. Once trained, NeRF can project the 3D scene into 2D image at any viewpoints. It deploys a classical technique called volumetric rendering to render each pixel by tracing rays from the viewpoint to the scene.
+BlockNeRF is a variant of [Neural Radiance Field network (aka NeRF)](https://arxiv.org/abs/2003.08934). As a very brief introduction, NeRF learns to reconstruct a 3D scene from its 2D views and their associated viewpoints. We can treat a scene as a bounded volume and NeRF describes the density $\sigma$ and RGB colour $\bold{c}$ of any position in the space. Once trained, NeRF can project the 3D scene into 2D image at any viewpoints. It deploys a classical technique called volumetric rendering to render each pixel by tracing a ray from the viewpoint, through the pixel, to the scene.
 
-I will highlight some key techniques by BlockNeRF, together with its architecture. Due to limited space, I will spare their nitty gritty details. Below diagram best summarises BlockNeRF's design and I will explain each component in the following sessions.
+I will highlight some key techniques by BlockNeRF, together with its architecture. Due to limited space, I will spare their nitty gritty details.
+
+Below diagram best summarises BlockNeRF's design and I will explain each component in the following sessions.
 
 ![model_diagram.png]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/model_diagram.png)
 
