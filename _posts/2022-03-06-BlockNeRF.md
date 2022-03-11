@@ -51,9 +51,9 @@ Instead of treating position as a point from a beam of ray, we can treat it as a
 
 Such reframing implies that we have to treat $\bold{x}$ as a sample randomly drawn from a distribution resembling the conical frustum. Simulate $\bold{x}$ probabilistically would make the computation intractable, so we can featurize $\bold{x}$ by its expectation instead. To further simplify the setting, we can approximate ithe ill-shaped volumetric distribution by a nice-shaped multivariate Gaussian distribution. Such approximatation gives us a closed form on expected $\bold{x}$ transformed by positional encoding, aka $\mathbb{E}(\gamma(\bold{x}))$. 
 
-Since this post aims to explain the concept in an intuitive way so I will omit the exact formula of the closed form in this post. As a remark, this technique is called Integrated Positional Encoding because an expectation is no different from an integration (over a probability distribution).
-
 ![mip_nerf.png]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/mip_nerf.png)
+
+{% include note.html content='Since this post aims to intuitively explain the concept so I will omit the closed-form formula in this post. As a remark, this technique is called Integrated Positional Encoding because an expectation is no different from an integration over a probability distribution.' %}
 
 ### **2.1.2. Colour Prediction by $f\_{\bold{c}}$**
 
@@ -122,9 +122,9 @@ BlockNeRF targets to model the static landscape of the scene, but transient obje
 
 To address transient objects, we could bound their belonging regions with a pretrained semantic segmentation model, and then exclude the regions from the supervision. Recall that NeRF is supervised by minimising reconstruction loss between ground-truth pixels and rendered ones. Removing pixels associated to transient objects help eliminate inconsistent signals to NeRF.
 
-As a remark, this trick is also borrowed from [NeRF in the Wild](https://arxiv.org/abs/2008.02268)!
-
 ![masking.png]({{ site.baseurl }}/images/2022-03-06-BlockNeRF/masking.png)
+
+{% include note.html content='This trick is also borrowed from NeRF in the Wild!' %}
 
 
 ## **3. Orchestrating the Blocks**
