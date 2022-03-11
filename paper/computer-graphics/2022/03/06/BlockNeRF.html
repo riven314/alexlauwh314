@@ -205,9 +205,12 @@ window.onload = wrap_img;
 
 <p>Such reframing implies that we have to treat $\bold{x}$ as a sample randomly drawn from a distribution resembling the conical frustum. Simulate $\bold{x}$ probabilistically would make the computation intractable, so we can featurize $\bold{x}$ by its expectation instead. To further simplify the setting, we can approximate ithe ill-shaped volumetric distribution by a nice-shaped multivariate Gaussian distribution. Such approximatation gives us a closed form on expected $\bold{x}$ transformed by positional encoding, aka $\mathbb{E}(\gamma(\bold{x}))$.</p>
 
-<p>Since this post aims to explain the concept in an intuitive way so I will omit the exact formula of the closed form in this post. As a remark, this technique is called Integrated Positional Encoding because an expectation is no different from an integration (over a probability distribution).</p>
-
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/mip_nerf.png" alt="mip_nerf.png"></p>
+
+<div class="flash">
+    <svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>Since this post aims to intuitively explain the concept so I will omit the closed-form formula in this post. As a remark, this technique is called Integrated Positional Encoding because an expectation is no different from an integration over a probability distribution.
+</div>
 
 <h3 id="212-colour-prediction-by-f_boldc">
 <a class="anchor" href="#212-colour-prediction-by-f_boldc" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2.1.2. Colour Prediction by $f_{\bold{c}}$</strong>
@@ -273,9 +276,12 @@ T_{i} = \exp(-\sum_{j&lt;i} \delta_{j} \sigma_{j}), \hspace{8 mm} \delta_{l} = t
 
 <p>To address transient objects, we could bound their belonging regions with a pretrained semantic segmentation model, and then exclude the regions from the supervision. Recall that NeRF is supervised by minimising reconstruction loss between ground-truth pixels and rendered ones. Removing pixels associated to transient objects help eliminate inconsistent signals to NeRF.</p>
 
-<p>As a remark, this trick is also borrowed from <a href="https://arxiv.org/abs/2008.02268">NeRF in the Wild</a>!</p>
-
 <p><img src="/alexlauwh314/images/2022-03-06-BlockNeRF/masking.png" alt="masking.png"></p>
+
+<div class="flash">
+    <svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>This trick is also borrowed from NeRF in the Wild!
+</div>
 
 <h2 id="3-orchestrating-the-blocks">
 <a class="anchor" href="#3-orchestrating-the-blocks" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3. Orchestrating the Blocks</strong>
