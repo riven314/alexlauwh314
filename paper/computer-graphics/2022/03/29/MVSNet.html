@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Paper Summary: “MVSNet: Depth Inference for Unstructured Multi-view Stereo” | Document My Data Science Journey</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Paper Summary: “MVSNet: Depth Inference for Unstructured Multi-view Stereo”" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="it has inspired a lot of DL model on 3D computer vision. making it highly favorable to most use cases." />
+<meta property="og:description" content="it has inspired a lot of DL model on 3D computer vision. making it highly favorable to most use cases." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/29/MVSNet.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/29/MVSNet.html" />
+<meta property="og:site_name" content="Document My Data Science Journey" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-29-MVSNet/cover.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-29T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-29-MVSNet/cover.png" />
+<meta property="twitter:title" content="Paper Summary: “MVSNet: Depth Inference for Unstructured Multi-view Stereo”" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/29/MVSNet.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-03-29-MVSNet/cover.png","headline":"Paper Summary: “MVSNet: Depth Inference for Unstructured Multi-view Stereo”","dateModified":"2022-03-29T00:00:00-05:00","datePublished":"2022-03-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/paper/computer-graphics/2022/03/29/MVSNet.html"},"description":"it has inspired a lot of DL model on 3D computer vision. making it highly favorable to most use cases.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">Document My Data Science Journey</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Paper Summary: &quot;MVSNet: Depth Inference for Unstructured Multi-view Stereo&quot;</h1><p class="page-description">it has inspired a lot of DL model on 3D computer vision. making it highly favorable to most use cases.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-29T00:00:00-05:00" itemprop="datePublished">
+        Mar 29, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#paper">paper</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#computer-graphics">computer-graphics</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#1-motivations">1. Motivations</a></li>
+<li class="toc-entry toc-h2"><a href="#2-intuition-of-plane-sweeping-stereo">2. Intuition of Plane Sweeping Stereo</a></li>
+<li class="toc-entry toc-h2"><a href="#3-feature-extraction-and-feature-map-warping">3. Feature Extraction and Feature Map Warping</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#31-2d-cnn-f_boldf-for-feature-extraction">3.1. 2D CNN $f_{\bold{F}}$ for Feature Extraction</a></li>
+<li class="toc-entry toc-h3"><a href="#32-differential-homography-applied-on-feature-maps">3.2. Differential Homography Applied on Feature Maps</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#4-cost-volume-and-probability-volume">4. Cost Volume and Probability Volume</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#41-constructing-cost-volume-boldc">4.1. Constructing Cost Volume $\bold{C}$</a></li>
+<li class="toc-entry toc-h3"><a href="#42-constructing-probability-volume-boldp">4.2. Constructing Probability Volume $\bold{P}$</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#5-loss-function">5. Loss Function</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#51-initial-depth-map-boldd_i">5.1. Initial Depth Map $\bold{D}_{i}$</a></li>
+<li class="toc-entry toc-h3"><a href="#52-refined-depth-map-boldd_r">5.2. Refined Depth Map $\bold{D}_{r}$</a></li>
+<li class="toc-entry toc-h3"><a href="#53-putting-them-together-as-supervision">5.3. Putting Them Together as Supervision</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#6-results">6. Results</a></li>
+<li class="toc-entry toc-h2"><a href="#7-references">7. References</a></li>
+</ul><p><img src="/alexlauwh314/images/2022-03-29-MVSNet/cover.png" alt="cover" title="extracted from MVSNet paper"></p>
+
+<h2 id="1-motivations">
+<a class="anchor" href="#1-motivations" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>1. Motivations</strong>
+</h2>
+<hr>
+<p>Multi-view stereo is a general technique of 3D scene reconstruction by associating correspondence between multiple views. Views from the same scene typically share high degree of content. We can leverage the point-wise associations between views to recover the 3D points of the shared content.</p>
+
+<p>There are different approaches to find the correspondences. One classical approach is plane sweeping stereo. It esimates per-view depth map, and then jointly utilised the depth maps to estimate the 3D point clouds. This approach is scalable because it can process each view independently with low memory footprint. Despite its scalability, it struggles to recover challenging scenarios, such as region with occlusion, or surface that are specular or low-textured. It is hard to find correspondences of these regions using hand-crafted features. This issue could lead to noisy estimation of depth map.</p>
+
+<p>To address the issue, the authors proposes MVSNet: an end-to-end deep learning pipeline resembling traditional sweeping plane approach. It is as scalable as traditional sweeping plane approach, with more robust depth map estimation.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/multiview_example.png" alt="from AI Labs.tw" title="extracted from AI Labs.tw"></p>
+
+<h2 id="2-intuition-of-plane-sweeping-stereo">
+<a class="anchor" href="#2-intuition-of-plane-sweeping-stereo" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>2. Intuition of Plane Sweeping Stereo</strong>
+</h2>
+<hr>
+<p>Before diving into MVSNet’s pipeline, let’s have a quick look of how plane sweeping stereo works. Understanding its key idea helps understand the basis that MVSNet is built upon.</p>
+
+<p>The objective is to estimate a depth map for a view. Let’s call the view as reference view $\bold{I}_{1}$ and denote the other views as source views $\{ \bold{I}_{k} \}_{k=2}^N$. The algorithm makes use of all $N$ views (both reference view and source views) to do the estimation.</p>
+
+<p>Imagine you insert a suite of virtual planes into the scene that are parallel to the reference view. Let’s say there are $D$ of them. These planes are uniformly apart with varying distance from the reference view. These planes represent different hypotheses of depth values.</p>
+
+<p>Next, we cast a viewing frustum of the reference camera into the scene. Following the frustum we project the reference view into each virtual plane. We end up with $D$ projections, essentially different enlargment of the reference view.</p>
+
+<p>For the rest of the views, we can warp each of them into each virtual plane, at the same place where the reference view is projected. Since we know <a href="https://en.wikipedia.org/wiki/Camera_matrix">camera matrix</a> of each view, we can apply classical <a href="https://en.wikipedia.org/wiki/Homography#:~:text=In%20projective%20geometry%2C%20a%20homography,lines%2C%20and%20thus%20a%20collineation.">homography</a> to warp a source view to the target projection, and then express its image coordinate with respect to reference camera.</p>
+
+<p>After warping all views, we should have $N$ warped images on each plane. We can then evaluate the pixel-wise variance across the $N$ warped images. The intuition is to estimate how likely the $N$ warped images are projecting the same content at the same pixel position. Low variance indicates the 3D point associated to the target pixel is likely to lie on that plane. Therefore, we can estimate the depth of the target pixel by the depth of that plane.</p>
+
+<p>The above procedures can be visualized by the following diagram. For simplicity, we use colour as a naive feature. Notice the target pixel has the lowest variance in colour at the second plane, so its associated depth $d_{2}$ is the best estimate of target pixel’s depth.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/sweeping_plane.png" alt="from Fall 2021 CS 543/ECE 549: Computer Vision" title="extracted from Fall 2021 CS 543/ECE 549: Computer Vision (University of Illinois at Urbana-Champaign)"></p>
+
+<div class="flash">
+    <svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>Since this session aims to offer high-level intuition, I skipped its technical details. Also for the diagram above, I use colour as feature but it is usually not favorable because it is vulnerable to variations like illuminance difference.
+</div>
+
+<h2 id="3-feature-extraction-and-feature-map-warping">
+<a class="anchor" href="#3-feature-extraction-and-feature-map-warping" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3. Feature Extraction and Feature Map Warping</strong>
+</h2>
+<hr>
+
+<h3 id="31-2d-cnn-f_boldf-for-feature-extraction">
+<a class="anchor" href="#31-2d-cnn-f_boldf-for-feature-extraction" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.1. 2D CNN $f_{\bold{F}}$ for Feature Extraction</strong>
+</h3>
+<p>MVSNet’s pipeline is basically similar to plan sweeping stereo, except it swaps in learnable components into a few places.</p>
+
+<p>Knowing that hand-crafted feature is not robust to diverse variations, MVSNet deploys a learnable 2D Convolutional Neural Network (CNN) $f_{\bold{F}}$ to extract features from each view. The extracted features should capture rich local semantics, so it is more robust to different variations.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>f</mi><mi mathvariant="bold">F</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="bold">I</mi><mi mathvariant="bold">i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="bold">F</mi><mi mathvariant="bold">i</mi></msub></mrow><annotation encoding="application/x-tex">f_{\bold{F}}(\bold{I_{i}}) = \bold{F_{i}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33027699999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">F</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83611em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>
+
+<p>Let’s say a view $\bold{I_{i}}$ has a dimension of $(W \times H \times 3)$ including RGB channel. The CNN returns its downsampled feature map $\bold{F_{i}}$ of dimension $(W/4 \times H/4 \times F)$, with $F$ being the size of feature channel. $f_{\bold{F}}$ serves as a feature extractor. It transforms a set of views $\{ \bold{I}_{k} \}_{i=1}^{N}$ into a set of feature maps $\{ \bold{F}_{k} \}_{i=1}^{N}$, visualized as follows.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/feature_extraction.png" alt="feature_extraction.png"></p>
+
+<h3 id="32-differential-homography-applied-on-feature-maps">
+<a class="anchor" href="#32-differential-homography-applied-on-feature-maps" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>3.2. Differential Homography Applied on Feature Maps</strong>
+</h3>
+<p>By the principle of homography, we can warp feature maps to each sweeping plane in front of the reference view.</p>
+
+<p>Since the homography transformation is just a matrix multiplication with a feature map, it is differentiable and can be backpropagated. Such nice property makes homography transformation integrable into the end-to-end pipeline. This enables MVSNet to be aware of geometric relationships between different views, so as to learn the 3D geometry of the scene.</p>
+
+<p>A set of feature maps $\{ \bold{F}_{k} \}_{i=1}^{N}$ of dimension $(W/4 \times H/4 \times F)$ are warped to a set of feature volumes $\{ \bold{V}_{k} \}_{i=1}^{N}$ of dimension $(W/4 \times H/4 \times D \times F)$.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/homography_warping.png" alt="homography_warping.png"></p>
+
+<h2 id="4-cost-volume-and-probability-volume">
+<a class="anchor" href="#4-cost-volume-and-probability-volume" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4. Cost Volume and Probability Volume</strong>
+</h2>
+<hr>
+
+<h3 id="41-constructing-cost-volume-boldc">
+<a class="anchor" href="#41-constructing-cost-volume-boldc" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4.1. Constructing Cost Volume $\bold{C}$</strong>
+</h3>
+<p>Now we need to aggregate the set of feature volumes $\{ \bold{V}_{k} \}_{i=1}^{N}$ into a single tensor. This is tricky because the number of views $N$ is arbitrary.</p>
+
+<p>The authors propose variance-based metric to reduce the feature volumes set into a tensor of dimension $(W/4 \times H/4 \times D \times F)$. The metric is essentially an element-wise variance across feature volumes. The variance-based metric is in line with the principle of traditional plane sweeping stereo. It measures multi=feature consistency at different pixel position at different depth.</p>
+
+<p>The tensor it returns is called <strong>Cost Volume</strong> $\bold{C}$.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><msub><mi mathvariant="bold">V</mi><mn mathvariant="bold">1</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi mathvariant="bold">V</mi><mi mathvariant="bold">N</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mo stretchy="false">(</mo><msub><mi mathvariant="bold">V</mi><mi mathvariant="bold">i</mi></msub><mo>−</mo><mrow><mover accent="true"><mi mathvariant="bold">V</mi><mo>ˉ</mo></mover><mo stretchy="false">)</mo></mrow></mrow><mi>N</mi></mfrac></mrow><annotation encoding="application/x-tex">\bold{C} = Var(\bold{V_{1}},...,\bold{V_{N}}) = \frac{\sum_{i=1}^{N} (\bold{V_{i}} - \bold{\bar{V})}} {N}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord mathbf">C</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">Va</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mopen">(</span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.01597em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33027699999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.01597em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.356941em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.670941em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6897100000000003em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.981231em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.01597em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8512200000000001em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">V</span></span><span style="top:-3.25511em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">ˉ</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+
+<p>Here $\bold{\bar{V}}$ is the element-wise average of $\{ \bold{V}_{k} \}_{i=1}^{N}$ and the whole operation is differentiable.</p>
+
+<h3 id="42-constructing-probability-volume-boldp">
+<a class="anchor" href="#42-constructing-probability-volume-boldp" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>4.2. Constructing Probability Volume $\bold{P}$</strong>
+</h3>
+<p>Notice the Cost Volume encodes multi-feature consistency in its $F$ channel. It is hard to infer depth based on those high-dimensional quantities.</p>
+
+<p>In addition, the Cost Volume is especially noisy on regions with occlusion or tricky surface. To make the subsequent depth estimate more accurate, we can apply smoothing on the Cost Volume. It could effectively smooth away noise based on information from its neighboring pixels.</p>
+
+<p>To this end, the authors introduce a learnable 3D CNN UNet $f_{\bold{P}}$ to transform the Cost Volume into a tensor of dimension $(W/4 \times H/4 \times D)$. It serves to aggregates $D$ channel and smooth away the noise from the Cost Volume.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>f</mi><mi mathvariant="bold">P</mi></msub><mo stretchy="false">(</mo><mi mathvariant="bold">C</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="bold">P</mi></mrow><annotation encoding="application/x-tex">f_{\bold{P}}(\bold{C}) = \bold{P}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33027699999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">P</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathbf">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68611em;vertical-align:0em;"></span><span class="mord mathbf">P</span></span></span></span></span>
+
+<p>The last layer is a softmax applied on $D$ channel, so the resultant tensor is a <strong>Probability Volume</strong> $\bold{P}$ which expresses the pixel-wise depth as a probability distribution. You can treat the pixel-wise depth estimation as a classification problem. The probability distribution signals which sweeping plane the associated 3D point is likely to lie on.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/volume.png" alt="volume.png"></p>
+
+<h2 id="5-loss-function">
+<a class="anchor" href="#5-loss-function" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5. Loss Function</strong>
+</h2>
+<hr>
+
+<h3 id="51-initial-depth-map-boldd_i">
+<a class="anchor" href="#51-initial-depth-map-boldd_i" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5.1. Initial Depth Map $\bold{D}_{i}$</strong>
+</h3>
+<p>Argmax (winner-take-all) is not differentiable so we shouldn’t use it to get the estimated depth map from Probability Volume.</p>
+
+<p>An alternative is <strong>Soft Argmin</strong> operation. It is no different from a pixel-wise expectation over the probability distribution of its depth. We can estimate the initial depth map $\bold{D_{i}}$ with soft argmin operation. Its dimension is $(W/4 \times H/4)$.</p>
+
+<p>The predicted depth at pixel position $(u, v)$ is:</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">D</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>∑</mo><mrow><mi>d</mi><mo>=</mo><msub><mi>d</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow><msub><mi>d</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub></munderover><mi>d</mi><mo>×</mo><mi mathvariant="bold">P</mi><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\bold{D}_{i}(u, v) = \sum_{d=d_{min}}^{d_{max}} d \times \bold{P}(u, v, d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathbf">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.2494260000000006em;vertical-align:-1.402213em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8472130000000004em;"><span style="top:-1.847887em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mrel mtight">=</span><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">min</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.311105em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.402213em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathbf">P</span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span></span>
+
+<p>$d_{min}$ and $d_{max}$ is the depth of the closest and furthest sweeping plane, while $\bold{P}(u, v, d)$ is the probability that pixel position $(u, v)$ has a depth of $d$.</p>
+
+<h3 id="52-refined-depth-map-boldd_r">
+<a class="anchor" href="#52-refined-depth-map-boldd_r" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5.2. Refined Depth Map $\bold{D}_{r}$</strong>
+</h3>
+<p>Initial depth map may suffer from over-smoothing on its boundary caused by the 3D CNN UNet.</p>
+
+<p>To address this, the authors introduce a 2D CNN $f_{r}$ to predict a residual map from the initial depth map $\bold{D_{i}}$ and the resized reference image $\bold{\tilde{I}}_{1}$. $\bold{D}_{i}$ and $\bold{\tilde{I}}_{1}$ are concatenated before feeding to network.</p>
+
+<p>Composing the residual and the initial depth map gives a refined depth map $\bold{D}_{r}$:</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>f</mi><mi>r</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="bold">D</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mover accent="true"><mi mathvariant="bold">I</mi><mo>~</mo></mover><mn>1</mn></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mi mathvariant="bold">D</mi><mi>i</mi></msub><mo>=</mo><msub><mi mathvariant="bold">D</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">f_{r}(\bold{D}_{i}, \bold{\tilde{I}}_{1}) + \bold{D}_{i} = \bold{D}_{r}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.19955em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9495499999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">I</span></span><span style="top:-3.6051100000000003em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83611em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83611em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>
+
+<h3 id="53-putting-them-together-as-supervision">
+<a class="anchor" href="#53-putting-them-together-as-supervision" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>5.3. Putting Them Together as Supervision</strong>
+</h3>
+
+<p>To complete the training pipeline, we compare the ground truth depth map against both the initial depth map and the refined depth map.</p>
+
+<p>All 3 networks $f_{\bold{F}}$, $f_{\bold{P}}$, $f_{r}$ are learned to minimise the absolute differences.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/loss_function.png" alt="loss_function.png"></p>
+
+<h2 id="6-results">
+<a class="anchor" href="#6-results" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>6. Results</strong>
+</h2>
+<hr>
+<p>Once MVSNet is trained, you can deploy it to estimate the depth map for a view.</p>
+
+<p>The inference pipeline works the same as training one. You treat the view of interest as a reference view, and then warp all views onto its associated sweeping planes. You feed them to the trained MVSNet, and it runs through the pipeline to give you its estimated depth map. What makes it even more powerful is its capacity to generalize on unseen scenes. Even if the input views are from novel scenes, MVSNet is still able to reliably estimate their depth maps.</p>
+
+<p>The authors propose an additional post-processing step to further filter the depth map.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/postprocess.png" alt="postprocess.png" title="extracted from MVSNet paper"></p>
+
+<p>After post-processing, MVSNet significantly outperform preceding models. The authors compare its reconstruction quality against different models for various scenes. It shows that preceding models fail to reconstruct a number of regions. In contrast, MVSNet managed to recover those regions.</p>
+
+<p>The improvement can be attributed to the robust feature representation learned by $f_{\bold{F}}$. Additionally, $f_{\bold{P}}$ and $f_{r}$ (together with post-processing) further improve the quality of the predicted depth map.</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/results.png" alt="results.png" title="extracted from MVSNet paper"></p>
+
+<p>Quantitatively, MVSNet outperforms preceding models by a large margin in most aspects, as shown:</p>
+
+<p><img src="/alexlauwh314/images/2022-03-29-MVSNet/table.png" alt="table.png" title="extracted from MVSNet paper"></p>
+
+<h2 id="7-references">
+<a class="anchor" href="#7-references" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. References</h2>
+<hr>
+<ol>
+  <li><a href="https://arxiv.org/abs/1804.02505">MVSNet: Depth Inference for Unstructured Multi-view Stereo</a></li>
+  <li><a href="https://ieeexplore.ieee.org/document/517097">A space-sweep approach to true multi-image matching</a></li>
+  <li><a href="https://ieeexplore.ieee.org/document/8637125">Multi-View Stereo: A Tutorial</a></li>
+  <li><a href="http://slazebni.cs.illinois.edu/fall21/lec18_mvs.pdf">Fall 2021 CS 543/ECE 549: Computer Vision, Lecture 18 Slide (University of Illinois at Urbana-Champaign)</a></li>
+  <li><a href="https://www.kindoblue.nl/tensorflow-homography/">Homography for tensorflow</a></li>
+  <li><a href="https://silverwind1982.pixnet.net/blog/post/153225557">Pinhole Camera: Homography (written in Chinese)</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/paper/computer-graphics/2022/03/29/MVSNet.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/riven314" target="_blank" title="riven314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/alex-lau-84b37a134" target="_blank" title="alex-lau-84b37a134"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/AlexLau314" target="_blank" title="AlexLau314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
