@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN | Document My Data Science Journey</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention during installations." />
+<meta property="og:description" content="If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention during installations." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/cuda/devops/2022/03/31/Quick-Guide-Install-CUDA.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/cuda/devops/2022/03/31/Quick-Guide-Install-CUDA.html" />
+<meta property="og:site_name" content="Document My Data Science Journey" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-31-Quick-Guide-Install-CUDA/cover.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-31T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-03-31-Quick-Guide-Install-CUDA/cover.png" />
+<meta property="twitter:title" content="Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/cuda/devops/2022/03/31/Quick-Guide-Install-CUDA.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-03-31-Quick-Guide-Install-CUDA/cover.png","headline":"Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN","dateModified":"2022-03-31T00:00:00-05:00","datePublished":"2022-03-31T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/cuda/devops/2022/03/31/Quick-Guide-Install-CUDA.html"},"description":"If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention during installations.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">Document My Data Science Journey</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN</h1><p class="page-description">If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention during installations.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-31T00:00:00-05:00" itemprop="datePublished">
+        Mar 31, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#cuda">cuda</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#devops">devops</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="motivations">Motivations</h2>
+<hr />
+<p>If you work in machine learning or deep learning, you probably have experience installing NVIDIA driver, CUDA Toolkit and cuDNN. They are essential softwares to enable GPU computing for most Deep Learning frameworks. But installing them correctly can be tricky. Any step goes wrong could leave you clueless of what to do.</p>
+
+<p>This post offers you a quick guide to installing NVIDIA driver, CUDA Toolkit and cuDNN, coupled with things you should pay attention to. This guide consolidates the resources I used when I installed the same for my GPU server.</p>
+
+<div class="flash">
+    <svg class="octicon octicon-info" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>The guide is specific to Ubuntu and the version I am using is Ubuntu 20.04 LTS. The steps may or may not work for other Ubuntu version.
+</div>
+
+<h2 id="step-1-install-nvidia-driver">Step 1: Install NVIDIA Driver</h2>
+<hr />
+
+<h4 id="option-1-install-via-software--updates"><strong>Option 1: Install via “Software &amp; Updates”</strong></h4>
+<ol>
+  <li>From “Software &amp; Updates”, go to “Additional Drivers” for available GPU drivers you can install</li>
+  <li>Choose the driver you need (those labelled as “proprietary, tested” is more flavorable)</li>
+  <li>Click “Apply Changes” and wait for the installation to complete</li>
+  <li>Reboot your machine</li>
+</ol>
+
+<p><img src="/alexlauwh314/images/2022-03-31-Quick-Guide-Install-CUDA/GUI.png" alt="GUI.png" /></p>
+
+<h4 id="option-2-install-via-command-line"><strong>Option 2: Install via Command Line</strong></h4>
+<ol>
+  <li>Search for available NVIDIA drivers in your terminal
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt search nvidia-driver
+</code></pre></div>    </div>
+  </li>
+  <li>Update your package repository
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt update
+ <span class="nb">sudo </span>apt upgrade
+</code></pre></div>    </div>
+  </li>
+  <li>Install the NVIDIA driver that you need (in my case, I installed <code class="language-plaintext highlighter-rouge">nvidia-driver-470</code>)
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-driver-470
+</code></pre></div>    </div>
+  </li>
+  <li>Reboot your machine</li>
+</ol>
+
+<p>If successful, you should be able to run the command <code class="language-plaintext highlighter-rouge">nvidia-smi</code> after reboot. The following is a sample output:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alex@alex-desktop:~<span class="nv">$ </span>nvidia-smi
+
+Thu Mar 31 17:12:04 2022       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.103.01   Driver Version: 470.103.01   CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|<span class="o">===============================</span>+<span class="o">======================</span>+<span class="o">======================</span>|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0  On |                  N/A |
+| 30%   35C    P8    21W / 250W |    276MiB / 11019MiB |      2%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   1  NVIDIA GeForce ...  Off  | 00000000:02:00.0 Off |                  N/A |
+| 30%   33C    P8     2W / 250W |     10MiB / 11019MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|<span class="o">=============================================================================</span>|
+|    0   N/A  N/A      1019      G   /usr/lib/xorg/Xorg                 71MiB |
+|    0   N/A  N/A      1612      G   /usr/lib/xorg/Xorg                 91MiB |
+|    0   N/A  N/A      1739      G   /usr/bin/gnome-shell              100MiB |
+|    1   N/A  N/A      1019      G   /usr/lib/xorg/Xorg                  4MiB |
+|    1   N/A  N/A      1612      G   /usr/lib/xorg/Xorg                  4MiB |
++-----------------------------------------------------------------------------+
+</code></pre></div></div>
+
+<h2 id="step-2-install-cuda-toolkit">Step 2: Install CUDA Toolkit</h2>
+<hr />
+<ol>
+  <li>Download the <code class="language-plaintext highlighter-rouge">.deb</code> file of your desired CUDA Toolkit version
+    <ul>
+      <li><a href="https://developer.nvidia.com/cuda-toolkit-archive">Here</a> is a menu of all CUDA Toolkit archive<br />(you need to register a NVIDIA membership to view the page)</li>
+      <li>This chart summarizes what version of CUDA Toolkit is compatible with your NVIDIA driver<br />(extracted from <a href="https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html">CUDA Toolkit documentation</a>)</li>
+    </ul>
+
+    <p><img src="/alexlauwh314/images/2022-03-31-Quick-Guide-Install-CUDA/cuda_chart.png" alt="cuda_chart.png" /></p>
+  </li>
+  <li>Run the following commands in your terminal to install CUDA Toolkit. Make sure the current directory contains the downloaded <code class="language-plaintext highlighter-rouge">.deb</code> file (in my case I installed CUDA Toolkit 11.4)
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">cuda</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">ubuntu2004</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="n">local_11</span><span class="p">.</span><span class="mf">4.0</span><span class="o">-</span><span class="mf">470.42</span><span class="p">.</span><span class="mi">01</span><span class="o">-</span><span class="mi">1</span><span class="n">_amd64</span><span class="p">.</span><span class="n">deb</span>
+ <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">key</span> <span class="n">add</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">ubuntu2004</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="n">local</span><span class="o">/</span><span class="mi">7</span><span class="n">fa2af80</span><span class="p">.</span><span class="n">pub</span>
+ <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+ <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">cuda</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Append the following environment variables in your <code class="language-plaintext highlighter-rouge">~/.bashrc</code> file
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">PATH</span><span class="p">}:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">11.4</span><span class="o">/</span><span class="nb">bin</span>
+ <span class="n">export</span> <span class="n">CUDA_HOME</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">CUDA_HOME</span><span class="p">}:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">11.4</span>
+ <span class="n">export</span> <span class="n">LD_LIBRARY_PATH</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">LD_LIBRARY_PATH</span><span class="p">}:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">11.4</span><span class="o">/</span><span class="n">lib64</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Run <code class="language-plaintext highlighter-rouge">source ~/.bashrc</code> in your terminal to update the environment variables of your bash session</li>
+</ol>
+
+<p>If successful, you should be able to run the command <code class="language-plaintext highlighter-rouge">nvcc --version</code>. Here is a sample output:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">alex</span><span class="o">@</span><span class="n">alex</span><span class="o">-</span><span class="n">desktop</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">nvcc</span> <span class="o">--</span><span class="n">version</span>
+<span class="n">nvcc</span><span class="p">:</span> <span class="n">NVIDIA</span> <span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="n">Cuda</span> <span class="n">compiler</span> <span class="n">driver</span>
+<span class="n">Copyright</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="mi">2005</span><span class="o">-</span><span class="mi">2021</span> <span class="n">NVIDIA</span> <span class="n">Corporation</span>
+<span class="n">Built</span> <span class="n">on</span> <span class="n">Wed_Jun__2_19</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">15</span><span class="n">_PDT_2021</span>
+<span class="n">Cuda</span> <span class="n">compilation</span> <span class="n">tools</span><span class="p">,</span> <span class="n">release</span> <span class="mf">11.4</span><span class="p">,</span> <span class="n">V11</span><span class="p">.</span><span class="mf">4.48</span>
+<span class="n">Build</span> <span class="n">cuda_11</span><span class="p">.</span><span class="mf">4.</span><span class="n">r11</span><span class="p">.</span><span class="mi">4</span><span class="o">/</span><span class="n">compiler</span><span class="p">.</span><span class="mi">30033411_0</span>
+</code></pre></div></div>
+
+<div class="flash flash-error">
+    <svg class="octicon octicon-alert" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.22 1.754a.25.25 0 00-.44 0L1.698 13.132a.25.25 0 00.22.368h12.164a.25.25 0 00.22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM9 11a1 1 0 11-2 0 1 1 0 012 0zm-.25-5.25a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"></path></svg>
+    <strong>Warning: </strong>There are a few things to pay attention!<br /><br /><b>First</b>, I dont suggest to install CUDA Toolkit via package repository (i.e. <code class="language-plaintext highlighter-rouge">sudo apt-get install cuda</code>) because it would install outdated version. I got CUDA Toolkit version 10.x when installed via package repository.<br /><br /><b>Second</b>, I suggest to delete the old <code class="language-plaintext highlighter-rouge">.deb</code> files from your current directory before running <code class="language-plaintext highlighter-rouge">sudo apt-get intsall cuda</code> because it would pick up the latest version of .deb file in the folder for installation.<br /><br /><b>Finally</b>, double check the CUDA Toolkit version to be installed is compatible with your NVIDIA driver based on the <code class="language-plaintext highlighter-rouge">.deb</code> filename. For example, mine is <code class="language-plaintext highlighter-rouge">cuda-repo-ubuntu2004-11-4-local_11.4.0-470.42.01-1_amd64.deb</code>, so it is compatible with NVIDIA driver 470.
+</div>
+
+<h2 id="step-3-install-cudnn">Step 3: Install cuDNN</h2>
+<hr />
+<ol>
+  <li>Download the <code class="language-plaintext highlighter-rouge">.tgz</code> file of your desired cuDNN version
+    <ul>
+      <li><a href="https://developer.nvidia.com/rdp/cudnn-archive">Here</a> is a menu of all cuDNN archives. Pick the one compatible with your CUDA Toolkit version (e.g. Mine is cuDNN v8.2.4 for CUDA 11.4)</li>
+    </ul>
+  </li>
+  <li>Run the following commands in your terminal to install cuDNN. Make sure the current directory contains the downloaded <code class="language-plaintext highlighter-rouge">.tgz</code> file (In my case, I installed cuDNN version 8.2.4)
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">tar</span> <span class="o">-</span><span class="n">xzvf</span> <span class="n">cudnn</span><span class="o">-</span><span class="mf">11.4</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">-</span><span class="n">v8</span><span class="p">.</span><span class="mf">2.4</span><span class="p">.</span><span class="mf">15.</span><span class="n">tgz</span>
+ <span class="n">sudo</span> <span class="n">cp</span> <span class="n">cuda</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">cudnn</span><span class="p">.</span><span class="n">h</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">include</span>
+ <span class="n">sudo</span> <span class="n">cp</span> <span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libcudnn</span><span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span>
+ <span class="n">sudo</span> <span class="n">chmod</span> <span class="n">a</span><span class="o">+</span><span class="n">r</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">cudnn</span><span class="p">.</span><span class="n">h</span> \ 
+ <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libcudnn</span><span class="o">*</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<div class="flash flash-error">
+    <svg class="octicon octicon-alert" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.22 1.754a.25.25 0 00-.44 0L1.698 13.132a.25.25 0 00.22.368h12.164a.25.25 0 00.22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM9 11a1 1 0 11-2 0 1 1 0 012 0zm-.25-5.25a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"></path></svg>
+    <strong>Warning: </strong>check your <code class="language-plaintext highlighter-rouge">.tgz</code> filename to make sure it is compatible with your CUDA Toolkit version. For example, mine is <code class="language-plaintext highlighter-rouge">cudnn-11.4-linux-x64-v8.2.4.15.tgz</code>, so it’s compatible with CUDA Toolkit 11.4
+</div>
+
+<h2 id="how-do-i-know-everything-is-working">How Do I Know Everything is Working?</h2>
+<hr />
+<p>A straight-forward way to tell is to install CUDA version of any Deep Learning framework (e.g. PyTorch, Tensorflow, JAX) and see if they managed to detect your GPU devices.</p>
+
+<p>The following Python code help you validate CUDA is working in each framework:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># PyTorch
+</span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">()</span>
+
+<span class="c1"># Tensorflow
+</span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="n">tf</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">list_physical_devices</span><span class="p">(</span><span class="s">'GPU'</span><span class="p">)</span>
+
+<span class="c1"># JAX
+</span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="n">jax</span><span class="p">.</span><span class="n">devices</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="what-if-i-failed-the-installation">What If I Failed the Installation?</h2>
+<hr />
+<p>it is not uncommon to encounter something unexpected during your installation (e.g. you got an error during CUDA installation, or command <code class="language-plaintext highlighter-rouge">nvcc --version</code> doesn’t work after installing CUDA Toolkit).</p>
+
+<p>Fear Not! What you need to do is to remove all of your installations (i.e. NVIDIA Driver, CUDA Toolkit, cuDNN) and try the installation from scratch again.</p>
+
+<p>To remove all of your installations, run the following commands in your terminal:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt clean
+apt update
+apt purge cuda
+apt purge nvidia-<span class="k">*</span>
+apt autoremove
+</code></pre></div></div>
+
+<h2 id="references">References</h2>
+<hr />
+<ol>
+  <li><a href="https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu">Install Nvidia Drivers on Ubuntu 20.04 {3 Methods}</a></li>
+  <li><a href="https://stackoverflow.com/questions/50213021/best-practice-for-upgrading-cuda-and-cudnn-for-tensorflow">Best practice for upgrading CUDA and cuDNN for tensorflow</a></li>
+  <li><a href="https://askubuntu.com/questions/1280205/problem-while-installing-cuda-toolkit-in-ubuntu-18-04">Problem while installing cuda toolkit in ubuntu 18.04</a></li>
+  <li><a href="https://xcat-docs.readthedocs.io/en/stable/advanced/gpu/nvidia/verify_cuda_install.html">Verify CUDA Installation - xCAT 2.16.3 documentation</a></li>
+  <li><a href="https://developer.nvidia.com/cuda-toolkit-archive">CUDA Toolkit Archive</a></li>
+  <li><a href="https://developer.nvidia.com/rdp/cudnn-archive">cuDNN Archive</a></li>
+  <li><a href="https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html">Release Notes :: CUDA Toolkit Documentation</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/cuda/devops/2022/03/31/Quick-Guide-Install-CUDA.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/riven314" target="_blank" title="riven314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/alex-lau-84b37a134" target="_blank" title="alex-lau-84b37a134"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/AlexLau314" target="_blank" title="AlexLau314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
