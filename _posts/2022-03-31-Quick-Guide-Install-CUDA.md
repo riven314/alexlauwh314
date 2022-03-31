@@ -1,6 +1,6 @@
 ---
 keywords: cuda
-description: "If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention during installations."
+description: "If you need GPU computing for your living, you probably used to install NVIDIA driver, CUDA Toolkit and cuDNN for your machine. The whole procedures are non-trivial and you may feel clueless if something go wrong in the mid. This guide aims to offer you clear instructions with things you should pay attention."
 title: "Quick Guide to Install NVIDIA Driver, CUDA Toolkit and cuDNN"
 toc: false
 badges: true
