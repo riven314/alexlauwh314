@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Notes on “Clean Code in Python” — Design by Contracts (DbC) | Document My Data Science Journey</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Notes on “Clean Code in Python” — Design by Contracts (DbC)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This post talks about a design practice called Design by Contract (DbC) in Python context, with an example from JAX codebase. I came across this concept in “Clean Code in Python: Develop maintainable and efficient code, 2nd Edition”. I find this practice ubiquitous in various open source Python codebases, so I would like to document its principle and try to apply it in the future." />
+<meta property="og:description" content="This post talks about a design practice called Design by Contract (DbC) in Python context, with an example from JAX codebase. I came across this concept in “Clean Code in Python: Develop maintainable and efficient code, 2nd Edition”. I find this practice ubiquitous in various open source Python codebases, so I would like to document its principle and try to apply it in the future." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/software/design/2022/06/03/DesignByContract.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/software/design/2022/06/03/DesignByContract.html" />
+<meta property="og:site_name" content="Document My Data Science Journey" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-06-03-DesignByContract/cover.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-06-03T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-06-03-DesignByContract/cover.jpg" />
+<meta property="twitter:title" content="Notes on “Clean Code in Python” — Design by Contracts (DbC)" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/software/design/2022/06/03/DesignByContract.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-06-03-DesignByContract/cover.jpg","headline":"Notes on “Clean Code in Python” — Design by Contracts (DbC)","dateModified":"2022-06-03T00:00:00-05:00","datePublished":"2022-06-03T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/software/design/2022/06/03/DesignByContract.html"},"description":"This post talks about a design practice called Design by Contract (DbC) in Python context, with an example from JAX codebase. I came across this concept in “Clean Code in Python: Develop maintainable and efficient code, 2nd Edition”. I find this practice ubiquitous in various open source Python codebases, so I would like to document its principle and try to apply it in the future.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">Document My Data Science Journey</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Notes on &quot;Clean Code in Python&quot; — Design by Contracts (DbC)</h1><p class="page-description">This post talks about a design practice called Design by Contract (DbC) in Python context, with an example from JAX codebase. I came across this concept in "Clean Code in Python: Develop maintainable and efficient code, 2nd Edition". I find this practice ubiquitous in various open source Python codebases, so I would like to document its principle and try to apply it in the future.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-06-03T00:00:00-05:00" itemprop="datePublished">
+        Jun 3, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#software">software</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#design">design</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><img src="/alexlauwh314/images/2022-06-03-DesignByContract/cover.jpg" alt="cover.png" /></p>
+
+<h2 id="what-is-design-by-contract-dbc-and-why-need-it"><strong>What is Design by Contract (DbC) and Why Need it?</strong></h2>
+<hr />
+
+<p>We write a programme for a specific purpose. The programme could be either a function or a class method. So long as we feed the “right” inputs to it, ideally it should do exactly what we intend. No more and no less. Like <code class="language-plaintext highlighter-rouge">pop</code> method is meant to remove the last element from its <code class="language-plaintext highlighter-rouge">list</code> instance in-place, and <code class="language-plaintext highlighter-rouge">sorted</code> function is meant to make a copy of a <code class="language-plaintext highlighter-rouge">list</code> instance with its elements sorted.</p>
+
+<p>But we are prone to mistakes, so is a programme. In practice, it is not surprising for a programme to do or output something out of our expectation. It could go wrong for various reasons, such as erroreous logics, negligence of corner cases, or incompliant users feeding wrong inputs to the programme. The root cause could easily become intractable when the programme are nested with complex logics. For the reason above, it is naive for us to safely assume a programme does what we intend. We should have a mechanism to safeguard this. When it goes out of its intension, the mechanism should be able to surface it promptly, so as to signal the developers for a fix and isolate the error from the subsequent programmes. Design by Contract (DbC) is invented for this purpose.</p>
+
+<p>DbC is a software design practice to enforce responsibilities on both parties, programme and user, to ensure a programme to do what we intend. As the name suggests, the practice works like a contract. It entails the responsibilities that both parties have to observe. So long as the responsibilities are satisfied, it garantee the programme behaves correctly. If the programme goes wrong, it could quickly surface the issue and easily trace which party breaks its responsibilities.</p>
+
+<h2 id="key-pillars-of-design-by-contract"><strong>Key Pillars of Design by Contract</strong></h2>
+<hr />
+
+<p>Just like a contract is typically composed of several sessions, DbC typically contains several components: Precondition, Postcondition, Invariants and Side Effects. It is a good practice to document them to inform the users about the essential “terms and conditions” of the programme.</p>
+
+<p>Among these components, Precondition and Postcondition are the core because they are the responsibilities applied on both parties. As an analogy, they serve like two separate inspectors in a manufacturinng factory. One responsible for gating the quality of the raw materials, another responsible for checking the quality of the end product. The factory could functions perfectly thanks to the diligence of these two inspectors.</p>
+
+<h3 id="-precondition"><strong>🕍 Precondition</strong></h3>
+
+<p>Simply put, Precondition is the inspector gating the inputs that the user feed to the programme. The programme can’t behave as intended without the “right” inputs. If the inspector finds that the inputs do not observe to the contract, it invalidate the inputs and raise out to the user. In this instance, the responsibility belongs to the user because one fails follow the “terms and conditions” of the contract.</p>
+
+<p>Typical things to validate on the inputs are their types and properties. For example, you could validate the input is an instance of <code class="language-plaintext highlighter-rouge">np.ndarray</code> with dimension of 2. It is a good habit to document these validation rules in your doc-string. For types, we could instead handily annotate them in function signature, thanks to the introduction of type annotation since Python 3.6.</p>
+
+<p>Such annotation gives clear instructions to the users about the types of inputs and outputs. In addition, it is convenient to debugging because we could check the type compliance with static analysis tool such as MyPy in your IDE. This approach compacts the type information into your code, sparing additional effort to document them in doc-string. Having said that, type annotations in Python only serves as a soft compliance, meaning that failure of type compliance doesn’t raise any error.</p>
+
+<p><img src="/alexlauwh314/images/2022-06-03-DesignByContract/mypy.png" alt="An example to show that mypy correctly identify a type miscompliance of the function input" /></p>
+
+<h3 id="-postcondition"><strong>🛕 Postcondition</strong></h3>
+
+<p>Contrary to Preconditon, Postcondition is the inspector gating the outputs that the programme return. If any miscompliance is found in the outputs, it would raise out to the user. It helps isolate the issue quickly and prevent the “wrong” outputs further propagate to subsequent programmes.</p>
+
+<p>Similar to precondition, typical things to validate on the outputs are their types and properties. For example, you could validate the output has a <code class="language-plaintext highlighter-rouge">np.ndarray</code> type without any <code class="language-plaintext highlighter-rouge">np.nan</code> values. As mentioned above, we could annotate the expected types of the outputs by function signature.</p>
+
+<h3 id="-invariant"><strong>🌠 Invariant</strong></h3>
+
+<p>Invariant is another component probably highlighted in the contract. I find this term popping up a lot in programming, but I did’t quite understand what it means at the beginning. It actually means something pretty conceptual. It refers to a property that always holds true in a programme. It’s a property that you can safely assume in order for the programme to function well. For example, <code class="language-plaintext highlighter-rouge">sorted</code> always returns a new list whose entries are sorted.</p>
+
+<h3 id="-side-effects"><strong>🚨 Side Effects</strong></h3>
+
+<p>Optionally, you can also highlight the side effects in the contract.</p>
+
+<p>Side effects is any operations in a programme that change the state of things out of its local scope. It may sound confusing when you first come across the meaning of side effects. To make a few examples, changing the value of a global variable is a side effect because the function intends to change the state of a variable that doesn’t live in the function. Other examples of side effects are mutating the values of an input that you feed to the programme, or raising an error to terminate the entire process.</p>
+
+<p>It is worthwhile to highlight the side effects, if any, because these are things that Precondition and Postcondition fail to capture.</p>
+
+<h2 id="examples-from-jax-codebase"><strong>Examples from JAX Codebase</strong></h2>
+<hr />
+
+<p>It’s worth taking a look at an example to consolidate the idea. As my personal preference, I take a function from JAX codebase as an example because I am recently picking up the framework - <a href="https://jax.readthedocs.io/en/latest/_autosummary/jax.numpy.broadcast_shapes.html">broadcast_shapes</a></p>
+
+<p><code class="language-plaintext highlighter-rouge">broadcast_shapes</code> receives any number of shape instances as inputs. A shape represents the dimensions of any tensors. It is expressed as a tuple of <code class="language-plaintext highlighter-rouge">int</code>. Given the shapes as inputs, <code class="language-plaintext highlighter-rouge">broadcast_shapes</code> attempts to find out the ultimate shape after <a href="https://numpy.org/doc/stable/user/basics.broadcasting.html#basics-broadcasting">broadcasting</a> is applied on each axis of the inputs.</p>
+
+<p>For example:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">jax.numpy</span> <span class="kn">import</span> <span class="n">broadcast_shapes</span>
+
+<span class="n">broadcast_shapes</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="c1"># (3, 4, 5)
+</span></code></pre></div></div>
+
+<h3 id="-a-brief-look-at-the-source-code"><strong>🔎 A Brief Look at the Source Code</strong></h3>
+
+<p><code class="language-plaintext highlighter-rouge">broadcast_shapes</code> internally triggers another function of same name but living in a private module <code class="language-plaintext highlighter-rouge">jax._src.lax.lax</code>. We extract the code snippet associated to <code class="language-plaintext highlighter-rouge">broadcast_shapes</code> below:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># code snippet extracted from jax._src.lax.lax
+</span><span class="k">def</span> <span class="nf">broadcast_shapes</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">core</span><span class="p">.</span><span class="n">Tracer</span><span class="p">],</span> <span class="p">...]</span>
+                     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">core</span><span class="p">.</span><span class="n">Tracer</span><span class="p">],</span> <span class="p">...]:</span>
+  <span class="s">"""Returns the shape that results from NumPy broadcasting of `shapes`."""</span>
+  <span class="c1"># NOTE: We have both cached and uncached versions to handle Tracers in shapes.
+</span>  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_broadcast_shapes_cached</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">)</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_broadcast_shapes_uncached</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">)</span>
+
+<span class="o">@</span><span class="n">cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">_broadcast_shapes_cached</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">...])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">...]:</span>
+  <span class="k">return</span> <span class="n">_broadcast_shapes_uncached</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_broadcast_shapes_uncached</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">):</span>
+  <span class="n">_validate_shapes</span><span class="p">(</span><span class="n">shapes</span><span class="p">)</span>
+  <span class="n">fst</span><span class="p">,</span> <span class="o">*</span><span class="n">rst</span> <span class="o">=</span> <span class="n">shapes</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">rst</span><span class="p">:</span> <span class="k">return</span> <span class="n">fst</span>
+
+  <span class="c1"># First check if we need only rank promotion (and not singleton-broadcasting).
+</span>  <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="n">_reduce</span><span class="p">(</span><span class="n">_broadcast_ranks</span><span class="p">,</span> <span class="n">rst</span><span class="p">,</span> <span class="n">fst</span><span class="p">)</span>
+  <span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span> <span class="k">pass</span>
+
+  <span class="c1"># Next try singleton-broadcasting, padding out ranks using singletons.
+</span>  <span class="n">ndim</span> <span class="o">=</span> <span class="n">_max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">)</span>
+  <span class="n">shape_list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ndim</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span> <span class="o">+</span> <span class="n">shape</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">]</span>
+  <span class="n">result_shape</span> <span class="o">=</span> <span class="n">_try_broadcast_shapes</span><span class="p">(</span><span class="n">shape_list</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">result_shape</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Incompatible shapes for broadcasting: {}"</span>
+                     <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape_list</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="n">result_shape</span>
+
+<span class="k">def</span> <span class="nf">_validate_shapes</span><span class="p">(</span><span class="n">shapes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Shape</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="nf">_check_static_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">):</span>
+    <span class="n">checked</span> <span class="o">=</span> <span class="n">canonicalize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">checked</span><span class="p">):</span>
+      <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"Only non-negative indices are allowed when broadcasting"</span> \
+            <span class="sa">f</span><span class="s">" static shapes, but got shape </span><span class="si">{</span><span class="n">shape</span><span class="err">!</span><span class="n">r</span><span class="si">}</span><span class="s">."</span>
+      <span class="k">raise</span> <span class="nb">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If we try to apply DbC framework to analyse <code class="language-plaintext highlighter-rouge">broadcast_shapes</code>, we will notice it has both Precondition and Postconditions. Let’s find them out one by one!</p>
+
+<h3 id="-identifying-precondition"><strong>📍 Identifying Precondition</strong></h3>
+
+<p>Notice most of the heavy lifting jobs are done in <code class="language-plaintext highlighter-rouge">_broadcast_shapes_uncached</code>. From there we see that <code class="language-plaintext highlighter-rouge">_validate_shapes</code> is the helper function that validate the inputs so it is in fact serving as Precondition.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_validate_shapes</span><span class="p">(</span><span class="n">shapes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Shape</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="nf">_check_static_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">):</span>
+    <span class="n">checked</span> <span class="o">=</span> <span class="n">canonicalize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">checked</span><span class="p">):</span>
+      <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"Only non-negative indices are allowed when broadcasting"</span> \
+            <span class="sa">f</span><span class="s">" static shapes, but got shape </span><span class="si">{</span><span class="n">shape</span><span class="err">!</span><span class="n">r</span><span class="si">}</span><span class="s">."</span>
+      <span class="k">raise</span> <span class="nb">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>What <code class="language-plaintext highlighter-rouge">_validate_shapes</code> does is to standardize (they call it canonicalize) the types of each <code class="language-plaintext highlighter-rouge">shape</code> instance and verify that they all only contain positive <code class="language-plaintext highlighter-rouge">int</code>. Otherwise, the programme raises a <code class="language-plaintext highlighter-rouge">TypeError</code>. If we find this error upon using <code class="language-plaintext highlighter-rouge">broadcast_shapes</code>, it means we are complying to the rules set in the contract.</p>
+
+<p>Additionally, we can see from <code class="language-plaintext highlighter-rouge">broadcast_shapes</code>’s signature that each <code class="language-plaintext highlighter-rouge">shape</code> is expected to have a type of <code class="language-plaintext highlighter-rouge">Tuple[int, ...]</code>.</p>
+
+<div class="flash">
+    <svg class="octicon octicon-info" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>As a side note, you will notice the type annotation of <code class="language-plaintext highlighter-rouge">shape</code> is actually <code class="language-plaintext highlighter-rouge">Tuple[Union[int, core.Tracer], ...]</code>. <code class="language-plaintext highlighter-rouge">core.Tracer</code> is a special type designed by JAX specifically used for abstract evaluation rules. This type is only internally used in JAX and its function is out of the scope of this blogpost. You could safely ignore it for now.
+</div>
+
+<h3 id="-identifying-postcondition"><strong>📌 Identifying Postcondition</strong></h3>
+
+<p>From <code class="language-plaintext highlighter-rouge">broadcast_shapes</code>’s signature, we can see that a new shape instance is expected to return and it should have a type of <code class="language-plaintext highlighter-rouge">Tuple[int, ...]</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">_try_broadcast_shapes</code> attempts to find a valid shape as a return but it doesn’t garantee to find one because the shapes provided may not be compatible to the broadcasting rules. Therefore, the programme has to check if a valid shape has been found at the end. The way it does is to check if <code class="language-plaintext highlighter-rouge">result_shape</code> is <code class="language-plaintext highlighter-rouge">None</code>. The programme raises <code class="language-plaintext highlighter-rouge">ValueError</code> if no valid shape is found.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">if</span> <span class="n">result_shape</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Incompatible shapes for broadcasting: {}"</span>
+                     <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape_list</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>However, there is one caveat here. When it comes to which party is responsible, the context here is slightly different. Failure of Postcondition doesn’t imply a critical flaw in <code class="language-plaintext highlighter-rouge">broadcast_shapes</code>. Instead it means by nature broadcasting can’t be done on the provided shapes. <code class="language-plaintext highlighter-rouge">broadcast_shapes</code> implicitly assumes its users understand the broadcasting rules.</p>
+
+<h2 id="references"><strong>References</strong></h2>
+<hr />
+<ol>
+  <li><a href="https://www.amazon.com/Clean-Code-Python-maintainable-efficient/dp/1800560214">Clean Code in Python: Develop maintainable and efficient code, 2nd Edition</a></li>
+  <li><a href="https://github.com/google/jax">JAX Github Codebase</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Design_by_contract">Wikipedia: Design by contract</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/software/design/2022/06/03/DesignByContract.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/riven314" target="_blank" title="riven314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/alex-lau-84b37a134" target="_blank" title="alex-lau-84b37a134"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/AlexLau314" target="_blank" title="AlexLau314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
