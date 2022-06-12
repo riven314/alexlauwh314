@@ -8,8 +8,8 @@
 <meta name="generator" content="Jekyll v4.1.1" />
 <meta property="og:title" content="Notes on “Clean Code in Python” — When to Apply Inheritance?" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern." />
-<meta property="og:description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern." />
+<meta name="description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance" />
+<meta property="og:description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance" />
 <link rel="canonical" href="https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html" />
 <meta property="og:url" content="https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html" />
 <meta property="og:site_name" content="Document My Data Science Journey" />
@@ -20,7 +20,7 @@
 <meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg" />
 <meta property="twitter:title" content="Notes on “Clean Code in Python” — When to Apply Inheritance?" />
 <script type="application/ld+json">
-{"url":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg","headline":"Notes on “Clean Code in Python” — When to Apply Inheritance?","dateModified":"2022-06-12T00:00:00-05:00","datePublished":"2022-06-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html"},"description":"It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern.","@context":"https://schema.org"}</script>
+{"url":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg","headline":"Notes on “Clean Code in Python” — When to Apply Inheritance?","dateModified":"2022-06-12T00:00:00-05:00","datePublished":"2022-06-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html"},"description":"It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
 
@@ -106,7 +106,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Notes on &quot;Clean Code in Python&quot; — When to Apply Inheritance?</h1><p class="page-description">It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-06-12T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Notes on &quot;Clean Code in Python&quot; — When to Apply Inheritance?</h1><p class="page-description">It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-06-12T00:00:00-05:00" itemprop="datePublished">
         Jun 12, 2022
       </time>
        • <span class="read-time" title="Estimated read time">
@@ -134,60 +134,67 @@ window.onload = wrap_img;
     <h2 id="motivation"><strong>Motivation</strong></h2>
 <hr />
 
-<p>Inheritance is a pattern typically seen in <a href="https://en.wikipedia.org/wiki/Object-oriented_programming">Object Oriented Programming (OOP)</a> languages such as Python.</p>
+<p>Inheritance is a pattern typically seen in <a href="https://en.wikipedia.org/wiki/Object-oriented_programming">Object Oriented Programming (OOP)</a> languages such as Python, but you may see some articles (like <a href="https://codeburst.io/inheritance-is-evil-stop-using-it-6c4f1caf5117">this one</a>) criticizing it.</p>
+
+<p>This post continues to summarize my take-aways from <a href="https://www.amazon.com/Clean-Code-Python-maintainable-efficient/dp/1800560214">“Clean Code in Python”</a>. In the book, the author explains the trade-off for using inheritance, and highlight a few scenarios appropriate for applying inheritance.</p>
 
 <h2 id="trade-off-for-using-inheritance"><strong>Trade-off for Using Inheritance</strong></h2>
 <hr />
 
 <p>While inheritance has its own benefit, we should be mindful of the trade-off for using it.</p>
 
-<h3 id="reduce-code-repetition"><strong>Reduce Code Repetition</strong></h3>
+<h3 id="-pro-reduce-code-repetition"><strong>✅ PRO: Reduce Code Repetition</strong></h3>
 
-<p>One motivation for inheritance is to avoid code duplication because any subclass could reuse the methods from its parent class. Such motivation is understandable because it is in line with <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY (Don’t Repeat Yourself)</a> principle. A code with minimal repetition is readable as it avoids redundant information showing up over and over again. It is also easier to maintain as you only need to do code change in one place.</p>
+<p>Inheritance reduces code duplication because any child classes could reuse the methods from its parent class. It is in line with <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY (Don’t Repeat Yourself)</a> principle.</p>
 
-<h3 id="higher-coupling"><strong>Higher Coupling</strong></h3>
+<p>A code with minimal repetition is readable as it avoids redundant information showing up over and over again. It is also easier to maintain as you only need to do code change in one place.</p>
 
-<p>Having said that, such benefit comes at a price. On the flip side, inheritance introduces dependency between parent class and its subclass. Such interdependence is called <a href="https://en.wikipedia.org/wiki/Coupling_(computer_programming)">Coupling</a>.</p>
+<h3 id="-con-higher-coupling"><strong>❌ CON: Higher Coupling</strong></h3>
 
-<p>Such dependency makes the code harder to maintain because any change you made in one of these classes inevitably propagates to its dependent classes. Such propagation is called <a href="https://en.wikipedia.org/wiki/Ripple_effect">Ripple Effect</a>. When you have a gigantic hierarchy in your inheritance, even a tiny change in one class could bring unanticipated impacts on other modules.</p>
+<p>Having said that, such benefit comes at a price. Inheritance introduces dependency between parent class and its subclass. Such interdependence is called <a href="https://en.wikipedia.org/wiki/Coupling_(computer_programming)">Coupling</a>.</p>
 
-<h3 id="lower-cohesion"><strong>Lower Cohesion</strong></h3>
+<p>Such dependency makes the code harder to maintain because any change you made in one of these classes inevitably propagates to its dependent classes. Such propagation is called <a href="https://en.wikipedia.org/wiki/Ripple_effect">Ripple Effect</a>.</p>
+
+<p>When you have a gigantic hierarchy in your inheritance, even a tiny change in one class could bring unanticipated impacts on other modules.</p>
+
+<h3 id="-con-lower-cohesion"><strong>❌ CON: Lower Cohesion</strong></h3>
 
 <p>Reusing methods from parent class sounds great! But what if you only need a small subset of them?</p>
 
-<p>Inheritance in this case renders the rest of the methods redundant, as if they should not belong to the class. It signals your subclass has issue with <a href="https://en.wikipedia.org/wiki/Cohesion_(computer_science)">Cohension</a>. It brings you technical debt because you have to take care of those unwanted methods. The situation is worse when some of the unwanted methods are public interfaces to the user. You may be aware which methods are unwanted, but your users are free to use any of them. So you have to deal it!</p>
+<p>Inheritance renders the rest of the methods redundant, as if they should not belong to the class.</p>
+
+<p>It signals your subclass has issue in terms of <a href="https://en.wikipedia.org/wiki/Cohesion_(computer_science)">Cohension</a>. It brings you technical debt because you have to take care of those unwanted methods. The situation is worse when some of the unwanted methods are public interfaces to the user. You may be aware which methods are unwanted, but your users are free to use any of them. So you have to deal it!</p>
 
 <p>You gain code reusability, but you pay additional cost for maintaining these unwanted interfaces.</p>
 
 <h2 id="when-not-to-use-inheritance"><strong>When NOT to Use Inheritance?</strong></h2>
 <hr />
 
-<p>To avoid introducing higher coupling and lower cohesion into your codebase, it is important to assess when NOT to use inheritance.</p>
+<p><em>DON’T apply inheritance simply for the sake of reusing codes!</em></p>
 
-<p>Don’t apply inheritance simply for the sake of reusing codes! Just because we get a few magic methods from a base class is not justified to introduce an inheritance.</p>
+<p>Just because we get a few magic methods from a base class is not justified to introduce an inheritance. Don’t overlook the higher coupling and lower cohesion that it adversely introduces, it could easily outweigh the benefit.</p>
 
-<p>Don’t overlook the higher coupling and lower cohesion that it adversely introduces, it could easily outweigh the benefit.</p>
+<p><em>DON’T apply inheritance when two objects are under “has-a” relationship!</em></p>
 
-<p>As one Medium article nicely pointed out, One anti-pattern for inheritance is when two objects are in “has-a” relationship. For example, a company has departments and employees so it is inappropriate to describe such relationship by inheritance. Department object shouldn’t inherit company object, so does employee object.</p>
+<p>For example, a company has departments and employees. Department object shouldn’t inherit company object, so does employee object. A better alternative to represent such relationship is <a href="https://en.wikipedia.org/wiki/Object_composition">Object Composition</a>.</p>
 
-<h2 id="then-when-to-use-inheritance"><strong>Then When to Use Inheritance?</strong></h2>
-
+<h2 id="when-to-use-inheritance"><strong>When to Use Inheritance?</strong></h2>
 <hr />
 
-<p>Inheritance is all about specialization. Child class is the same as its parent, with additionally implementations specific to its domain. It describes “is-a” relationship.</p>
+<p>Inheritance should describe a “is-a” relationship. Child class should be functionally the same as its parent. Child class is a variant of its parent class. In addition, child class should serve as a specialization. It extends or modify features from its parents to serve a specific domain.</p>
 
-<p>The book demonstrates 3 scenarios where it is appropriate to apply inheritance, all of which captures “is-a” relationships.</p>
+<p>Below I summarise 3 scenarios appropriate for inheritance that the book showcases. For each scenario I attach a few examples from open source code.</p>
 
 <h2 id="scenario-1"><strong>Scenario 1</strong></h2>
 <hr />
 
-<p>Your parent class has captured the overall pipeline, but a few of its components depends on interfaces to be defined in child classes. It is easier to illustrate by a few examples.</p>
+<p>Your parent class has captured the overall pipeline, but a few of its components depends on interfaces to be defined in child classes. It is easier to illustrate this by examples.</p>
 
-<h3 id="example-basehttprequesthandler-and-simplehttprequesthandler"><strong>Example: <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> and <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code></strong></h3>
+<h3 id="-example-basehttprequesthandler-and-simplehttprequesthandler"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> and <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code></strong></h3>
 
-<p>First example is extracted from Python built-in library. It contains <a href="https://github.com/python/cpython/blob/3.10/Lib/http/server.py">a module</a> for server handling.</p>
+<p>First example is extracted from the built-in [http] library. There is a <a href="https://github.com/python/cpython/tree/3.10/Lib/http">module</a> that contains helper functions for server handling.</p>
 
-<p>In the module, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is a class for handling HTTP requests in a server. This class has done a number of heavy lifting jobs, providing a number of methods that can run independently. For example:</p>
+<p>In the module, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is a class for handling HTTP requests in a server. This class implements a number of methods that can run independently. For example:</p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">parse_request</code> for parsing a request</li>
@@ -237,7 +244,7 @@ window.onload = wrap_img;
 
 <p>However, it doesn’t provide any of these methods. In essence, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is designed to follow inheritance. Users are meant to define those interfaces in its child class, such as <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code>.</p>
 
-<p><code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> extend from <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code>, like the following:</p>
+<p><code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> extend from <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SimpleHTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
     <span class="c1">####################################
@@ -260,13 +267,15 @@ window.onload = wrap_img;
             <span class="n">f</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div></div>
 
-<h3 id="example-callback-and-fetchpredscallback"><strong>Example: <code class="language-plaintext highlighter-rouge">Callback</code> and <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code></strong></h3>
+<h3 id="-example-callback-and-fetchpredscallback"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">Callback</code> and <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code></strong></h3>
 
-<p>This example is extracted from <a href="https://github.com/fastai/fastai">fastai</a> library, a high level Deep Learning framework built on top of <a href="https://pytorch.org/">PyTorch</a>.</p>
+<p>Another example is extracted from <a href="https://github.com/fastai/fastai">fastai</a> library, a high level Deep Learning framework built on top of <a href="https://pytorch.org/">PyTorch</a>.</p>
 
-<p>It introduces an interesting concept called Callback — an interface for user to flexibly intercept any phrase in a training loop and then inject customized procedures. It provide a list of phrases where you can intercept, each is associated to an event variable. For example, event <code class="language-plaintext highlighter-rouge">before_epoch</code> is called at the beginning of training epoch, event <code class="language-plaintext highlighter-rouge">after_loss</code> is called after the loss has been computed. You can read <a href="https://docs.fast.ai/callback.core.html">this documentation</a> to learn more about it.</p>
+<p>It has an interesting concept called Callback — an interface for user to flexibly intercept any phrase in a training loop and then inject customized procedures. It provide a list of phrases where you can intercept. For example, you can intercept at the beginning of training loop, or you can intercept the end of loss computation. You can read <a href="https://docs.fast.ai/callback.core.html">this documentation</a> to learn more about it.</p>
 
-<p>As the name suggests, <code class="language-plaintext highlighter-rouge">Callback</code> class (from this <a href="https://github.com/fastai/fastai/blob/master/fastai/callback/core.py#L48">module</a>) is responsible for it. How does it exemplify an inheritance pattern? Notice a short excerpt of its implementation. Pay attention to the middle:</p>
+<p>As the name suggests, <code class="language-plaintext highlighter-rouge">Callback</code> class (from this <a href="https://github.com/fastai/fastai/blob/master/fastai/callback/core.py#L48">module</a>) is responsible for such callback interface.</p>
+
+<p>Notice a short excerpt of its implementation. Pay attention to the middle:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Callback</span><span class="p">(</span><span class="n">Stateful</span><span class="p">,</span><span class="n">GetAttr</span><span class="p">):</span>
     <span class="c1">####################################
@@ -288,9 +297,11 @@ window.onload = wrap_img;
 </span>        <span class="k">return</span> <span class="n">res</span>
 </code></pre></div></div>
 
-<p>Its <code class="language-plaintext highlighter-rouge">__call__</code> method attempts to seek and then call the target method whose name is <code class="language-plaintext highlighter-rouge">event_name</code>, but <code class="language-plaintext highlighter-rouge">Callback</code> doesn’t have any of these methods provided. So again <code class="language-plaintext highlighter-rouge">Callback</code> is  meant to be inherited!</p>
+<p>Its <code class="language-plaintext highlighter-rouge">__call__</code> method attempts to seek and then call the target method whose name is the value of <code class="language-plaintext highlighter-rouge">event_name</code>. The value of <code class="language-plaintext highlighter-rouge">event_name</code> representats the phrase that you want to intercept. For example, <code class="language-plaintext highlighter-rouge">before_epoch</code> represents the beginning of training loop and <code class="language-plaintext highlighter-rouge">after_loss</code> represents the end of loss computation.</p>
 
-<p>One example of its child class is <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code>. It is a callback and specializes in storing model prediction of validation sets. This procedure is done at the end of validation stage, suggested by its method name (also the event name) <code class="language-plaintext highlighter-rouge">after_validate</code>:</p>
+<p>However, <code class="language-plaintext highlighter-rouge">Callback</code> doesn’t have any of these methods provided. So <code class="language-plaintext highlighter-rouge">Callback</code> is  meant to be inherited!</p>
+
+<p>One example of its child class is <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code> – a callback specialized in storing model prediction of validation sets. The step is done at the end of validation stage, suggested by its method name <code class="language-plaintext highlighter-rouge">after_validate</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FetchPredsCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="c1">####################################
@@ -308,17 +319,17 @@ window.onload = wrap_img;
 <h2 id="scenario-2"><strong>Scenario 2</strong></h2>
 <hr />
 
-<p>You want to enforce the same interfaces across class objects. In this case, you can make use of parent class as an abstract class.</p>
+<p>You want to enforce the same interfaces across class objects. You can make use of parent class as an abstract class.</p>
 
-<p>An abstract class serves as a contract with its child classes. It declare interfaces without a need to implement them, but its child classes must implement them in order to be instantiated. An abstract class is not meant to be instantiated because its purpose is to regulate its child classes.</p>
+<p>An abstract class enforces a contract with its child classes. It declares interfaces without a need to implement them, but its child classes must implement them in order to be instantiated.</p>
 
-<h3 id="example-abc-module"><strong>Example: <code class="language-plaintext highlighter-rouge">abc</code> Module</strong></h3>
+<h3 id="-example-abc-module"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">abc</code> Module</strong></h3>
 
-<p>In Python, <code class="language-plaintext highlighter-rouge">abc</code> is a handy module to help you define abstract class.</p>
+<p><code class="language-plaintext highlighter-rouge">abc</code> is a handy library to help you define abstract class.</p>
 
 <p>Any class inherited from <code class="language-plaintext highlighter-rouge">abc.ABC</code> class is treated as an abstract class and can’t be instantiated. You can declare the “contract-binding” interfaces with <code class="language-plaintext highlighter-rouge">abc.abstractmethod</code>. See its <a href="https://docs.python.org/3/library/abc.html">documentation</a> for more details.</p>
 
-<p>Here I provide a simple example on how to use <code class="language-plaintext highlighter-rouge">abc</code> module to enforce a contract:</p>
+<p>Here I provide a simple example on how to use <code class="language-plaintext highlighter-rouge">abc</code> module to define abstract class:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -344,7 +355,7 @@ window.onload = wrap_img;
         <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="example-dataset-and-cifar10"><strong>Example: <code class="language-plaintext highlighter-rouge">Dataset</code> and <code class="language-plaintext highlighter-rouge">CIFAR10</code></strong></h3>
+<h3 id="-example-dataset-and-cifar10"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">Dataset</code> and <code class="language-plaintext highlighter-rouge">CIFAR10</code></strong></h3>
 
 <p>Another example that fits into this category is torchvision’s <code class="language-plaintext highlighter-rouge">Dataset</code> class.</p>
 
@@ -361,7 +372,7 @@ window.onload = wrap_img;
         <span class="k">raise</span> <span class="nb">NotImplementedError</span>
 </code></pre></div></div>
 
-<p>Notice <code class="language-plaintext highlighter-rouge">Dataset</code> doesn’t make use of <code class="language-plaintext highlighter-rouge">abc</code> module, so its “contract-binding” interface <code class="language-plaintext highlighter-rouge">__getitem__</code> has to add a line — <code class="language-plaintext highlighter-rouge">raise NotImplementedError</code>.</p>
+<p>Notice <code class="language-plaintext highlighter-rouge">Dataset</code> doesn’t make use of <code class="language-plaintext highlighter-rouge">abc</code> module, so its “contract-binding” interface <code class="language-plaintext highlighter-rouge">__getitem__</code> has to add a line: <code class="language-plaintext highlighter-rouge">raise NotImplementedError</code>.</p>
 
 <p><code class="language-plaintext highlighter-rouge">CIFAR10</code> is an example of its child class. It represents <a href="http://www.cs.toronto.edu/~kriz/cifar.html">CIFAR10</a> dataset — a bechmark dataset for classification task in computer vision. See how <code class="language-plaintext highlighter-rouge">CIFAR10</code> implements <code class="language-plaintext highlighter-rouge">__getitem__</code> to fetch an image and its associated label from the data set.</p>
 
@@ -387,18 +398,20 @@ window.onload = wrap_img;
         <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">target</span>
 </code></pre></div></div>
 
-<p>Note that <code class="language-plaintext highlighter-rouge">VisionDataset</code> also stems from <code class="language-plaintext highlighter-rouge">Dataset</code> abstract class so any classes inheriting from it also follow the same contract.</p>
+<p>Note that <code class="language-plaintext highlighter-rouge">VisionDataset</code> stems from <code class="language-plaintext highlighter-rouge">Dataset</code> abstract class so any inheriting class follows the same contract.</p>
 
 <h2 id="scenario-3"><strong>Scenario 3</strong></h2>
 <hr />
 
-<p>The third scenario suitable for inheritance is exception handling. You can segregate a more generic error into more specific error with the help of inheritance. A child error could handle a specific type of error. It better helps developers identify the root cause of a failure. At the same time, it remains the flexibility to fall back to its generic “parent error”.</p>
+<p>The third scenario suitable for inheritance is exception handling.</p>
 
-<h3 id="example-contenttooshorterror-and-urlerror"><strong>Example: <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> and <code class="language-plaintext highlighter-rouge">URLError</code></strong></h3>
+<p>You can segregate a more generic error into more specific error with the help of inheritance.On one hand, a child error could handle a specific type of error. It better helps developers identify the root cause of a failure. On the other hand, it remains the flexibility to fall back to its generic “parent error”.</p>
 
-<p>A example I took here is referenced from the builtin <a href="https://github.com/python/cpython/tree/3.10/Lib/urllib">urllib</a> module. It defines a number errors customized to URL handling.</p>
+<h3 id="-example-contenttooshorterror-and-urlerror"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> and <code class="language-plaintext highlighter-rouge">URLError</code></strong></h3>
 
-<p><code class="language-plaintext highlighter-rouge">URLError</code> indicates more generic failures caused during accessing a URL link. Such failure could have many possible reasons — the URL is invalid, the status code from the server response is incomprehensible .. etc. <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> represents one of the specific failure: the downloaded file from the URL is incomplete, meaning the file size smaller than expected.</p>
+<p>A example I took here is referenced from the builtin <a href="https://github.com/python/cpython/tree/3.10/Lib/urllib">urllib</a> library. It defines a number of errors customized to URL handling.</p>
+
+<p><code class="language-plaintext highlighter-rouge">URLError</code> indicates a generic failure caused during accessing a URL link. Such failure could have many possible causes — invalid URL, incomprehensible status code from the server response… etc. <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> represents one of the cause: the downloaded file from the URL is incomplete, meaning the file size smaller than expected.</p>
 
 <p>To reflect such hierarchy, <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> inherits from <code class="language-plaintext highlighter-rouge">URLError</code>:</p>
 
