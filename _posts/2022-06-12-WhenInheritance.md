@@ -1,6 +1,6 @@
 ---
 keywords: software
-description: "It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern."
+description: "It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance"
 title: "Notes on \"Clean Code in Python\" — When to Apply Inheritance?"
 toc: false
 badges: true
@@ -13,60 +13,67 @@ layout: post
 ## **Motivation**
 ---
 
-Inheritance is a pattern typically seen in [Object Oriented Programming (OOP)](https://en.wikipedia.org/wiki/Object-oriented_programming) languages such as Python. 
+Inheritance is a pattern typically seen in [Object Oriented Programming (OOP)](https://en.wikipedia.org/wiki/Object-oriented_programming) languages such as Python, but you may see some articles (like [this one](https://codeburst.io/inheritance-is-evil-stop-using-it-6c4f1caf5117)) criticizing it.
+
+This post continues to summarize my take-aways from ["Clean Code in Python"](https://www.amazon.com/Clean-Code-Python-maintainable-efficient/dp/1800560214). In the book, the author explains the trade-off for using inheritance, and highlight a few scenarios appropriate for applying inheritance.
 
 ## **Trade-off for Using Inheritance**
 ---
 
 While inheritance has its own benefit, we should be mindful of the trade-off for using it.
 
-### **Reduce Code Repetition**
+### **✅ PRO: Reduce Code Repetition**
 
-One motivation for inheritance is to avoid code duplication because any subclass could reuse the methods from its parent class. Such motivation is understandable because it is in line with [DRY (Don’t Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) principle. A code with minimal repetition is readable as it avoids redundant information showing up over and over again. It is also easier to maintain as you only need to do code change in one place.
+Inheritance reduces code duplication because any child classes could reuse the methods from its parent class. It is in line with [DRY (Don’t Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) principle.
 
-### **Higher Coupling**
+A code with minimal repetition is readable as it avoids redundant information showing up over and over again. It is also easier to maintain as you only need to do code change in one place.
 
-Having said that, such benefit comes at a price. On the flip side, inheritance introduces dependency between parent class and its subclass. Such interdependence is called [Coupling](https://en.wikipedia.org/wiki/Coupling_(computer_programming)).
+### **❌ CON: Higher Coupling**
 
-Such dependency makes the code harder to maintain because any change you made in one of these classes inevitably propagates to its dependent classes. Such propagation is called [Ripple Effect](https://en.wikipedia.org/wiki/Ripple_effect). When you have a gigantic hierarchy in your inheritance, even a tiny change in one class could bring unanticipated impacts on other modules.
+Having said that, such benefit comes at a price. Inheritance introduces dependency between parent class and its subclass. Such interdependence is called [Coupling](https://en.wikipedia.org/wiki/Coupling_(computer_programming)).
 
-### **Lower Cohesion**
+Such dependency makes the code harder to maintain because any change you made in one of these classes inevitably propagates to its dependent classes. Such propagation is called [Ripple Effect](https://en.wikipedia.org/wiki/Ripple_effect).
+
+When you have a gigantic hierarchy in your inheritance, even a tiny change in one class could bring unanticipated impacts on other modules.
+
+### **❌ CON: Lower Cohesion**
 
 Reusing methods from parent class sounds great! But what if you only need a small subset of them?
 
-Inheritance in this case renders the rest of the methods redundant, as if they should not belong to the class. It signals your subclass has issue with [Cohension](https://en.wikipedia.org/wiki/Cohesion_(computer_science)). It brings you technical debt because you have to take care of those unwanted methods. The situation is worse when some of the unwanted methods are public interfaces to the user. You may be aware which methods are unwanted, but your users are free to use any of them. So you have to deal it!
+Inheritance renders the rest of the methods redundant, as if they should not belong to the class.
+
+It signals your subclass has issue in terms of [Cohension](https://en.wikipedia.org/wiki/Cohesion_(computer_science)). It brings you technical debt because you have to take care of those unwanted methods. The situation is worse when some of the unwanted methods are public interfaces to the user. You may be aware which methods are unwanted, but your users are free to use any of them. So you have to deal it!
 
 You gain code reusability, but you pay additional cost for maintaining these unwanted interfaces.
 
 ## **When NOT to Use Inheritance?**
 ---
 
-To avoid introducing higher coupling and lower cohesion into your codebase, it is important to assess when NOT to use inheritance.
+_DON'T apply inheritance simply for the sake of reusing codes!_
 
-Don’t apply inheritance simply for the sake of reusing codes! Just because we get a few magic methods from a base class is not justified to introduce an inheritance. 
+Just because we get a few magic methods from a base class is not justified to introduce an inheritance. Don’t overlook the higher coupling and lower cohesion that it adversely introduces, it could easily outweigh the benefit. 
 
-Don’t overlook the higher coupling and lower cohesion that it adversely introduces, it could easily outweigh the benefit. 
+_DON'T apply inheritance when two objects are under “has-a” relationship!_
 
-As one Medium article nicely pointed out, One anti-pattern for inheritance is when two objects are in “has-a” relationship. For example, a company has departments and employees so it is inappropriate to describe such relationship by inheritance. Department object shouldn’t inherit company object, so does employee object.
+For example, a company has departments and employees. Department object shouldn’t inherit company object, so does employee object. A better alternative to represent such relationship is [Object Composition](https://en.wikipedia.org/wiki/Object_composition).
 
-## **Then When to Use Inheritance?**
-
+## **When to Use Inheritance?**
 ---
 
-Inheritance is all about specialization. Child class is the same as its parent, with additionally implementations specific to its domain. It describes “is-a” relationship.
+Inheritance should describe a "is-a" relationship. Child class should be functionally the same as its parent. Child class is a variant of its parent class. In addition, child class should serve as a specialization. It extends or modify features from its parents to serve a specific domain.
 
-The book demonstrates 3 scenarios where it is appropriate to apply inheritance, all of which captures “is-a" relationships.
+Below I summarise 3 scenarios appropriate for inheritance that the book showcases. For each scenario I attach a few examples from open source code.
 
 ## **Scenario 1**
 ---
 
-Your parent class has captured the overall pipeline, but a few of its components depends on interfaces to be defined in child classes. It is easier to illustrate by a few examples.
+Your parent class has captured the overall pipeline, but a few of its components depends on interfaces to be defined in child classes. It is easier to illustrate this by examples.
 
-### **Example: `BaseHTTPRequestHandler` and `SimpleHTTPRequestHandler`**
+### **✨ Example: `BaseHTTPRequestHandler` and `SimpleHTTPRequestHandler`**
 
-First example is extracted from Python built-in library. It contains [a module](https://github.com/python/cpython/blob/3.10/Lib/http/server.py) for server handling. 
+First example is extracted from the built-in [http] library. There is a [module](https://github.com/python/cpython/tree/3.10/Lib/http) that contains helper functions for server handling.
 
-In the module, `BaseHTTPRequestHandler` is a class for handling HTTP requests in a server. This class has done a number of heavy lifting jobs, providing a number of methods that can run independently. For example:
+In the module, `BaseHTTPRequestHandler` is a class for handling HTTP requests in a server. This class implements a number of methods that can run independently. For example:
 
 - `parse_request` for parsing a request
 - `log_request` for logging an accepted request
@@ -115,7 +122,7 @@ It attempts to grab and then call the target method (i.e. `method`) whose name h
 
 However, it doesn’t provide any of these methods. In essence, `BaseHTTPRequestHandler` is designed to follow inheritance. Users are meant to define those interfaces in its child class, such as `SimpleHTTPRequestHandler`.
 
-`SimpleHTTPRequestHandler` is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make `SimpleHTTPRequestHandler` extend from `BaseHTTPRequestHandler`, like the following:
+`SimpleHTTPRequestHandler` is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make `SimpleHTTPRequestHandler` extend from `BaseHTTPRequestHandler`:
 
 ```python
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -139,13 +146,15 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             f.close()
 ```
 
-### **Example: `Callback` and `FetchPredsCallback`**
+### **✨ Example: `Callback` and `FetchPredsCallback`**
 
-This example is extracted from [fastai](https://github.com/fastai/fastai) library, a high level Deep Learning framework built on top of [PyTorch](https://pytorch.org/).
+Another example is extracted from [fastai](https://github.com/fastai/fastai) library, a high level Deep Learning framework built on top of [PyTorch](https://pytorch.org/).
 
-It introduces an interesting concept called Callback — an interface for user to flexibly intercept any phrase in a training loop and then inject customized procedures. It provide a list of phrases where you can intercept, each is associated to an event variable. For example, event `before_epoch` is called at the beginning of training epoch, event `after_loss` is called after the loss has been computed. You can read [this documentation](https://docs.fast.ai/callback.core.html) to learn more about it.
+It has an interesting concept called Callback — an interface for user to flexibly intercept any phrase in a training loop and then inject customized procedures. It provide a list of phrases where you can intercept. For example, you can intercept at the beginning of training loop, or you can intercept the end of loss computation. You can read [this documentation](https://docs.fast.ai/callback.core.html) to learn more about it.
 
-As the name suggests, `Callback` class (from this [module](https://github.com/fastai/fastai/blob/master/fastai/callback/core.py#L48)) is responsible for it. How does it exemplify an inheritance pattern? Notice a short excerpt of its implementation. Pay attention to the middle:
+As the name suggests, `Callback` class (from this [module](https://github.com/fastai/fastai/blob/master/fastai/callback/core.py#L48)) is responsible for such callback interface.
+
+Notice a short excerpt of its implementation. Pay attention to the middle:
 
 ```python
 class Callback(Stateful,GetAttr):
@@ -168,9 +177,11 @@ class Callback(Stateful,GetAttr):
         return res
 ```
 
-Its `__call__` method attempts to seek and then call the target method whose name is `event_name`, but `Callback` doesn’t have any of these methods provided. So again `Callback` is  meant to be inherited!
+Its `__call__` method attempts to seek and then call the target method whose name is the value of `event_name`. The value of `event_name` representats the phrase that you want to intercept. For example, `before_epoch` represents the beginning of training loop and `after_loss` represents the end of loss computation.
 
-One example of its child class is `FetchPredsCallback`. It is a callback and specializes in storing model prediction of validation sets. This procedure is done at the end of validation stage, suggested by its method name (also the event name) `after_validate`:
+However, `Callback` doesn’t have any of these methods provided. So `Callback` is  meant to be inherited!
+
+One example of its child class is `FetchPredsCallback` -- a callback specialized in storing model prediction of validation sets. The step is done at the end of validation stage, suggested by its method name `after_validate`:
 
 ```python
 class FetchPredsCallback(Callback):
@@ -189,17 +200,17 @@ class FetchPredsCallback(Callback):
 ## **Scenario 2**
 ---
 
-You want to enforce the same interfaces across class objects. In this case, you can make use of parent class as an abstract class.
+You want to enforce the same interfaces across class objects. You can make use of parent class as an abstract class.
 
-An abstract class serves as a contract with its child classes. It declare interfaces without a need to implement them, but its child classes must implement them in order to be instantiated. An abstract class is not meant to be instantiated because its purpose is to regulate its child classes.
+An abstract class enforces a contract with its child classes. It declares interfaces without a need to implement them, but its child classes must implement them in order to be instantiated.
 
-### **Example: `abc` Module**
+### **✨ Example: `abc` Module**
 
-In Python, `abc` is a handy module to help you define abstract class.
+`abc` is a handy library to help you define abstract class.
 
 Any class inherited from `abc.ABC` class is treated as an abstract class and can’t be instantiated. You can declare the “contract-binding” interfaces with `abc.abstractmethod`. See its [documentation](https://docs.python.org/3/library/abc.html) for more details.
 
-Here I provide a simple example on how to use `abc` module to enforce a contract:
+Here I provide a simple example on how to use `abc` module to define abstract class:
 
 ```python
 import numpy as np
@@ -226,7 +237,7 @@ class LinearModel(ABCModel):
         return self._model.predict(X)
 ```
 
-### **Example: `Dataset` and `CIFAR10`**
+### **✨ Example: `Dataset` and `CIFAR10`**
 
 Another example that fits into this category is torchvision’s `Dataset` class.
 
@@ -244,7 +255,7 @@ class Dataset(Generic[T_co]):
         raise NotImplementedError
 ```
 
-Notice `Dataset` doesn’t make use of `abc` module, so its “contract-binding” interface `__getitem__` has to add a line — `raise NotImplementedError`.
+Notice `Dataset` doesn’t make use of `abc` module, so its “contract-binding” interface `__getitem__` has to add a line: `raise NotImplementedError`.
 
 `CIFAR10` is an example of its child class. It represents [CIFAR10](http://www.cs.toronto.edu/~kriz/cifar.html) dataset — a bechmark dataset for classification task in computer vision. See how `CIFAR10` implements `__getitem__` to fetch an image and its associated label from the data set.
 
@@ -271,18 +282,20 @@ class CIFAR10(VisionDataset):
         return img, target
 ```
 
-Note that `VisionDataset` also stems from `Dataset` abstract class so any classes inheriting from it also follow the same contract.
+Note that `VisionDataset` stems from `Dataset` abstract class so any inheriting class follows the same contract.
 
 ## **Scenario 3**
 ---
 
-The third scenario suitable for inheritance is exception handling. You can segregate a more generic error into more specific error with the help of inheritance. A child error could handle a specific type of error. It better helps developers identify the root cause of a failure. At the same time, it remains the flexibility to fall back to its generic “parent error”.
+The third scenario suitable for inheritance is exception handling.
 
-### **Example: `ContentTooShortError` and `URLError`**
+You can segregate a more generic error into more specific error with the help of inheritance.On one hand, a child error could handle a specific type of error. It better helps developers identify the root cause of a failure. On the other hand, it remains the flexibility to fall back to its generic “parent error”.
 
-A example I took here is referenced from the builtin [urllib](https://github.com/python/cpython/tree/3.10/Lib/urllib) module. It defines a number errors customized to URL handling.
+### **✨ Example: `ContentTooShortError` and `URLError`**
 
-`URLError` indicates more generic failures caused during accessing a URL link. Such failure could have many possible reasons — the URL is invalid, the status code from the server response is incomprehensible .. etc. `ContentTooShortError` represents one of the specific failure: the downloaded file from the URL is incomplete, meaning the file size smaller than expected.
+A example I took here is referenced from the builtin [urllib](https://github.com/python/cpython/tree/3.10/Lib/urllib) library. It defines a number of errors customized to URL handling.
+
+`URLError` indicates a generic failure caused during accessing a URL link. Such failure could have many possible causes — invalid URL, incomprehensible status code from the server response... etc. `ContentTooShortError` represents one of the cause: the downloaded file from the URL is incomplete, meaning the file size smaller than expected.
 
 To reflect such hierarchy, `ContentTooShortError` inherits from `URLError`:
 
