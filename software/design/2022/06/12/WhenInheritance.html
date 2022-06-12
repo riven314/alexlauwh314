@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Notes on “Clean Code in Python” — When to Apply Inheritance? | Document My Data Science Journey</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Notes on “Clean Code in Python” — When to Apply Inheritance?" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern." />
+<meta property="og:description" content="It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern." />
+<link rel="canonical" href="https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html" />
+<meta property="og:url" content="https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html" />
+<meta property="og:site_name" content="Document My Data Science Journey" />
+<meta property="og:image" content="https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-06-12T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg" />
+<meta property="twitter:title" content="Notes on “Clean Code in Python” — When to Apply Inheritance?" />
+<script type="application/ld+json">
+{"url":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html","@type":"BlogPosting","image":"https://riven314.github.io/alexlauwh314/images/2022-06-12-WhenInheritance/cover.jpg","headline":"Notes on “Clean Code in Python” — When to Apply Inheritance?","dateModified":"2022-06-12T00:00:00-05:00","datePublished":"2022-06-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://riven314.github.io/alexlauwh314/software/design/2022/06/12/WhenInheritance.html"},"description":"It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/alexlauwh314/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://riven314.github.io/alexlauwh314/feed.xml" title="Document My Data Science Journey" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VH9SQ6TLML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VH9SQ6TLML');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/alexlauwh314/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/alexlauwh314/">Document My Data Science Journey</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/alexlauwh314/about/">About Me</a><a class="page-link" href="/alexlauwh314/search/">Search</a><a class="page-link" href="/alexlauwh314/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Notes on &quot;Clean Code in Python&quot; — When to Apply Inheritance?</h1><p class="page-description">It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-06-12T00:00:00-05:00" itemprop="datePublished">
+        Jun 12, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#software">software</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/alexlauwh314/categories/#design">design</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="motivation"><strong>Motivation</strong></h2>
+<hr />
+
+<p>Inheritance is a pattern typically seen in <a href="https://en.wikipedia.org/wiki/Object-oriented_programming">Object Oriented Programming (OOP)</a> languages such as Python.</p>
+
+<h2 id="trade-off-for-using-inheritance"><strong>Trade-off for Using Inheritance</strong></h2>
+<hr />
+
+<p>While inheritance has its own benefit, we should be mindful of the trade-off for using it.</p>
+
+<h3 id="reduce-code-repetition"><strong>Reduce Code Repetition</strong></h3>
+
+<p>One motivation for inheritance is to avoid code duplication because any subclass could reuse the methods from its parent class. Such motivation is understandable because it is in line with <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY (Don’t Repeat Yourself)</a> principle. A code with minimal repetition is readable as it avoids redundant information showing up over and over again. It is also easier to maintain as you only need to do code change in one place.</p>
+
+<h3 id="higher-coupling"><strong>Higher Coupling</strong></h3>
+
+<p>Having said that, such benefit comes at a price. On the flip side, inheritance introduces dependency between parent class and its subclass. Such interdependence is called <a href="https://en.wikipedia.org/wiki/Coupling_(computer_programming)">Coupling</a>.</p>
+
+<p>Such dependency makes the code harder to maintain because any change you made in one of these classes inevitably propagates to its dependent classes. Such propagation is called <a href="https://en.wikipedia.org/wiki/Ripple_effect">Ripple Effect</a>. When you have a gigantic hierarchy in your inheritance, even a tiny change in one class could bring unanticipated impacts on other modules.</p>
+
+<h3 id="lower-cohesion"><strong>Lower Cohesion</strong></h3>
+
+<p>Reusing methods from parent class sounds great! But what if you only need a small subset of them?</p>
+
+<p>Inheritance in this case renders the rest of the methods redundant, as if they should not belong to the class. It signals your subclass has issue with <a href="https://en.wikipedia.org/wiki/Cohesion_(computer_science)">Cohension</a>. It brings you technical debt because you have to take care of those unwanted methods. The situation is worse when some of the unwanted methods are public interfaces to the user. You may be aware which methods are unwanted, but your users are free to use any of them. So you have to deal it!</p>
+
+<p>You gain code reusability, but you pay additional cost for maintaining these unwanted interfaces.</p>
+
+<h2 id="when-not-to-use-inheritance"><strong>When NOT to Use Inheritance?</strong></h2>
+<hr />
+
+<p>To avoid introducing higher coupling and lower cohesion into your codebase, it is important to assess when NOT to use inheritance.</p>
+
+<p>Don’t apply inheritance simply for the sake of reusing codes! Just because we get a few magic methods from a base class is not justified to introduce an inheritance.</p>
+
+<p>Don’t overlook the higher coupling and lower cohesion that it adversely introduces, it could easily outweigh the benefit.</p>
+
+<p>As one Medium article nicely pointed out, One anti-pattern for inheritance is when two objects are in “has-a” relationship. For example, a company has departments and employees so it is inappropriate to describe such relationship by inheritance. Department object shouldn’t inherit company object, so does employee object.</p>
+
+<h2 id="then-when-to-use-inheritance"><strong>Then When to Use Inheritance?</strong></h2>
+
+<hr />
+
+<p>Inheritance is all about specialization. Child class is the same as its parent, with additionally implementations specific to its domain. It describes “is-a” relationship.</p>
+
+<p>The book demonstrates 3 scenarios where it is appropriate to apply inheritance, all of which captures “is-a” relationships.</p>
+
+<h2 id="scenario-1"><strong>Scenario 1</strong></h2>
+<hr />
+
+<p>Your parent class has captured the overall pipeline, but a few of its components depends on interfaces to be defined in child classes. It is easier to illustrate by a few examples.</p>
+
+<h3 id="example-basehttprequesthandler-and-simplehttprequesthandler"><strong>Example: <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> and <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code></strong></h3>
+
+<p>First example is extracted from Python built-in library. It contains <a href="https://github.com/python/cpython/blob/3.10/Lib/http/server.py">a module</a> for server handling.</p>
+
+<p>In the module, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is a class for handling HTTP requests in a server. This class has done a number of heavy lifting jobs, providing a number of methods that can run independently. For example:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parse_request</code> for parsing a request</li>
+  <li><code class="language-plaintext highlighter-rouge">log_request</code> for logging an accepted request</li>
+  <li><code class="language-plaintext highlighter-rouge">send_header</code> for sending a header to buffer</li>
+</ul>
+
+<p>But here notice how <code class="language-plaintext highlighter-rouge">handle_one_request</code> is defined. Pay attention to the middle:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">BaseHTTPRequestHandler</span><span class="p">(</span><span class="n">socketserver</span><span class="p">.</span><span class="n">StreamRequestHandler</span><span class="p">):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>	
+    <span class="k">def</span> <span class="nf">handle_one_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">raw_requestline</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">rfile</span><span class="p">.</span><span class="n">readline</span><span class="p">(</span><span class="mi">65537</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">raw_requestline</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">65536</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">requestline</span> <span class="o">=</span> <span class="s">''</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">request_version</span> <span class="o">=</span> <span class="s">''</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">command</span> <span class="o">=</span> <span class="s">''</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">send_error</span><span class="p">(</span><span class="n">HTTPStatus</span><span class="p">.</span><span class="n">REQUEST_URI_TOO_LONG</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">raw_requestline</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">parse_request</span><span class="p">():</span>
+                <span class="c1"># An error code has been sent, just exit
+</span>                <span class="k">return</span>
+            <span class="n">mname</span> <span class="o">=</span> <span class="s">'do_'</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">command</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mname</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">send_error</span><span class="p">(</span>
+                    <span class="n">HTTPStatus</span><span class="p">.</span><span class="n">NOT_IMPLEMENTED</span><span class="p">,</span>
+                    <span class="s">"Unsupported method (%r)"</span> <span class="o">%</span> <span class="bp">self</span><span class="p">.</span><span class="n">command</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mname</span><span class="p">)</span>
+            <span class="n">method</span><span class="p">()</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">wfile</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span> <span class="c1">#actually send the response if not already done.
+</span>        <span class="k">except</span> <span class="nb">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1">#a read or a write timed out.  Discard this connection
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">log_error</span><span class="p">(</span><span class="s">"Request timed out: %r"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">close_connection</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">return</span>
+</code></pre></div></div>
+
+<p>It attempts to grab and then call the target method (i.e. <code class="language-plaintext highlighter-rouge">method</code>) whose name has a pattern of “*do_<request type="">”* (examples of request type are GET and POST).</request></p>
+
+<p>However, it doesn’t provide any of these methods. In essence, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is designed to follow inheritance. Users are meant to define those interfaces in its child class, such as <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> extend from <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code>, like the following:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SimpleHTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>
+    <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Serve a GET request."""</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">send_head</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">wfile</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">f</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">do_HEAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Serve a HEAD request."""</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">send_head</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="example-callback-and-fetchpredscallback"><strong>Example: <code class="language-plaintext highlighter-rouge">Callback</code> and <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code></strong></h3>
+
+<p>This example is extracted from <a href="https://github.com/fastai/fastai">fastai</a> library, a high level Deep Learning framework built on top of <a href="https://pytorch.org/">PyTorch</a>.</p>
+
+<p>It introduces an interesting concept called Callback — an interface for user to flexibly intercept any phrase in a training loop and then inject customized procedures. It provide a list of phrases where you can intercept, each is associated to an event variable. For example, event <code class="language-plaintext highlighter-rouge">before_epoch</code> is called at the beginning of training epoch, event <code class="language-plaintext highlighter-rouge">after_loss</code> is called after the loss has been computed. You can read <a href="https://docs.fast.ai/callback.core.html">this documentation</a> to learn more about it.</p>
+
+<p>As the name suggests, <code class="language-plaintext highlighter-rouge">Callback</code> class (from this <a href="https://github.com/fastai/fastai/blob/master/fastai/callback/core.py#L48">module</a>) is responsible for it. How does it exemplify an inheritance pattern? Notice a short excerpt of its implementation. Pay attention to the middle:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Callback</span><span class="p">(</span><span class="n">Stateful</span><span class="p">,</span><span class="n">GetAttr</span><span class="p">):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">):</span>
+        <span class="s">"Call `self.{event_name}` if it's defined"</span>
+        <span class="n">_run</span> <span class="o">=</span> <span class="p">(</span><span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_inner_loop</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">run_train</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">'training'</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span> <span class="ow">or</span>
+               <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">run_valid</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">'training'</span><span class="p">,</span> <span class="bp">False</span><span class="p">)))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">run</span> <span class="ow">and</span> <span class="n">_run</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="n">res</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">noop</span><span class="p">)()</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">CancelBatchException</span><span class="p">,</span> <span class="n">CancelBackwardException</span><span class="p">,</span> <span class="n">CancelEpochException</span><span class="p">,</span> <span class="n">CancelFitException</span><span class="p">,</span> <span class="n">CancelStepException</span><span class="p">,</span> <span class="n">CancelTrainException</span><span class="p">,</span> <span class="n">CancelValidException</span><span class="p">):</span> <span class="k">raise</span>
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s">'Exception occured in `</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span><span class="si">}</span><span class="s">` when calling event `</span><span class="si">{</span><span class="n">event_name</span><span class="si">}</span><span class="s">`:</span><span class="se">\n\t</span><span class="si">{</span><span class="n">e</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">]</span>
+                <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">event_name</span><span class="o">==</span><span class="s">'after_fit'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="o">=</span><span class="bp">True</span> <span class="c1">#Reset self.run to True at each end of fit
+</span>        <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></div>
+
+<p>Its <code class="language-plaintext highlighter-rouge">__call__</code> method attempts to seek and then call the target method whose name is <code class="language-plaintext highlighter-rouge">event_name</code>, but <code class="language-plaintext highlighter-rouge">Callback</code> doesn’t have any of these methods provided. So again <code class="language-plaintext highlighter-rouge">Callback</code> is  meant to be inherited!</p>
+
+<p>One example of its child class is <code class="language-plaintext highlighter-rouge">FetchPredsCallback</code>. It is a callback and specializes in storing model prediction of validation sets. This procedure is done at the end of validation stage, suggested by its method name (also the event name) <code class="language-plaintext highlighter-rouge">after_validate</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FetchPredsCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>
+    <span class="k">def</span> <span class="nf">after_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"Fetch predictions from `Learner` without `self.cbs` and `remove_on_fetch` callbacks"</span>
+        <span class="n">to_rm</span> <span class="o">=</span> <span class="n">L</span><span class="p">(</span><span class="n">cb</span> <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">learn</span><span class="p">.</span><span class="n">cbs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="s">'remove_on_fetch'</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">learn</span><span class="p">.</span><span class="n">removed_cbs</span><span class="p">(</span><span class="n">to_rm</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">cbs</span><span class="p">)</span> <span class="k">as</span> <span class="n">learn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">preds</span> <span class="o">=</span> <span class="n">learn</span><span class="p">.</span><span class="n">get_preds</span><span class="p">(</span><span class="n">ds_idx</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">ds_idx</span><span class="p">,</span> <span class="n">dl</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">dl</span><span class="p">,</span>
+                <span class="n">with_input</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">with_input</span><span class="p">,</span> <span class="n">with_decoded</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">with_decoded</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">reorder</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span>
+</code></pre></div></div>
+
+<h2 id="scenario-2"><strong>Scenario 2</strong></h2>
+<hr />
+
+<p>You want to enforce the same interfaces across class objects. In this case, you can make use of parent class as an abstract class.</p>
+
+<p>An abstract class serves as a contract with its child classes. It declare interfaces without a need to implement them, but its child classes must implement them in order to be instantiated. An abstract class is not meant to be instantiated because its purpose is to regulate its child classes.</p>
+
+<h3 id="example-abc-module"><strong>Example: <code class="language-plaintext highlighter-rouge">abc</code> Module</strong></h3>
+
+<p>In Python, <code class="language-plaintext highlighter-rouge">abc</code> is a handy module to help you define abstract class.</p>
+
+<p>Any class inherited from <code class="language-plaintext highlighter-rouge">abc.ABC</code> class is treated as an abstract class and can’t be instantiated. You can declare the “contract-binding” interfaces with <code class="language-plaintext highlighter-rouge">abc.abstractmethod</code>. See its <a href="https://docs.python.org/3/library/abc.html">documentation</a> for more details.</p>
+
+<p>Here I provide a simple example on how to use <code class="language-plaintext highlighter-rouge">abc</code> module to enforce a contract:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span> 
+
+<span class="k">class</span> <span class="nc">ABCModel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="o">@</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="p">...</span>
+
+    <span class="o">@</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="p">...</span>
+
+<span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">ABCModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="example-dataset-and-cifar10"><strong>Example: <code class="language-plaintext highlighter-rouge">Dataset</code> and <code class="language-plaintext highlighter-rouge">CIFAR10</code></strong></h3>
+
+<p>Another example that fits into this category is torchvision’s <code class="language-plaintext highlighter-rouge">Dataset</code> class.</p>
+
+<p>PyTorch has its own pipeline to do data loading. To leverage the pipeline it built, you must implement the step to fetch samples from a data set. It’s like filling up a missing piece to complete a puzzle. Once it’s filled, the fetch samples can be shuffled and batched by <code class="language-plaintext highlighter-rouge">Dataloader</code> class to serve a neural network model.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Dataset</code> is the abstract class that enforces this constraint. User has to inherit from this class and implement <code class="language-plaintext highlighter-rouge">__getindex__</code> method for indexing a sample from a data set:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T_co</span><span class="p">]):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T_co</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span>
+</code></pre></div></div>
+
+<p>Notice <code class="language-plaintext highlighter-rouge">Dataset</code> doesn’t make use of <code class="language-plaintext highlighter-rouge">abc</code> module, so its “contract-binding” interface <code class="language-plaintext highlighter-rouge">__getitem__</code> has to add a line — <code class="language-plaintext highlighter-rouge">raise NotImplementedError</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">CIFAR10</code> is an example of its child class. It represents <a href="http://www.cs.toronto.edu/~kriz/cifar.html">CIFAR10</a> dataset — a bechmark dataset for classification task in computer vision. See how <code class="language-plaintext highlighter-rouge">CIFAR10</code> implements <code class="language-plaintext highlighter-rouge">__getitem__</code> to fetch an image and its associated label from the data set.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CIFAR10</span><span class="p">(</span><span class="n">VisionDataset</span><span class="p">):</span>
+    <span class="c1">####################################
+</span>    <span class="c1">### omit the rest of the methods ###
+</span>    <span class="c1">####################################
+</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">img</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">targets</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># doing this so that it is consistent with all other datasets
+</span>        <span class="c1"># to return a PIL Image
+</span>        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">transform</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">target_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">target_transform</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">target</span>
+</code></pre></div></div>
+
+<p>Note that <code class="language-plaintext highlighter-rouge">VisionDataset</code> also stems from <code class="language-plaintext highlighter-rouge">Dataset</code> abstract class so any classes inheriting from it also follow the same contract.</p>
+
+<h2 id="scenario-3"><strong>Scenario 3</strong></h2>
+<hr />
+
+<p>The third scenario suitable for inheritance is exception handling. You can segregate a more generic error into more specific error with the help of inheritance. A child error could handle a specific type of error. It better helps developers identify the root cause of a failure. At the same time, it remains the flexibility to fall back to its generic “parent error”.</p>
+
+<h3 id="example-contenttooshorterror-and-urlerror"><strong>Example: <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> and <code class="language-plaintext highlighter-rouge">URLError</code></strong></h3>
+
+<p>A example I took here is referenced from the builtin <a href="https://github.com/python/cpython/tree/3.10/Lib/urllib">urllib</a> module. It defines a number errors customized to URL handling.</p>
+
+<p><code class="language-plaintext highlighter-rouge">URLError</code> indicates more generic failures caused during accessing a URL link. Such failure could have many possible reasons — the URL is invalid, the status code from the server response is incomprehensible .. etc. <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> represents one of the specific failure: the downloaded file from the URL is incomplete, meaning the file size smaller than expected.</p>
+
+<p>To reflect such hierarchy, <code class="language-plaintext highlighter-rouge">ContentTooShortError</code> inherits from <code class="language-plaintext highlighter-rouge">URLError</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ContentTooShortError</span><span class="p">(</span><span class="n">URLError</span><span class="p">):</span>
+    <span class="s">"""Exception raised when downloaded size does not match content-length."""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="n">URLError</span><span class="p">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+</code></pre></div></div>
+
+<p>Here is a sample code to show the hierarchy. Thanks to the construction of <code class="language-plaintext highlighter-rouge">ContentTooShortError</code>, we can catch and handle this specific error if wanted. Otherwise, we could fallback to handle it like a more generic error, such as <code class="language-plaintext highlighter-rouge">URLError</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ContentTooShortError</span><span class="p">(</span><span class="s">"content too short"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span> 
+<span class="k">except</span> <span class="n">ContentTooShortError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Caught by ContentTooShortError exception"</span><span class="p">)</span> 
+<span class="k">except</span> <span class="n">URLError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Caught by URLError exception"</span><span class="p">)</span> 
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Caught by other exception"</span><span class="p">)</span>
+<span class="c1"># &gt;&gt;"Caught by ContentTooShortError exception"
+</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ContentTooShortError</span><span class="p">(</span><span class="s">"content too short"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">URLError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Caught by URLError exception"</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Caught by other exception"</span><span class="p">)</span>
+<span class="c1"># &gt;&gt;"Caught by URLError exception"
+</span></code></pre></div></div>
+
+<h2 id="references"><strong>References</strong></h2>
+<hr />
+<ol>
+  <li><a href="https://www.amazon.com/Clean-Code-Python-maintainable-efficient/dp/1800560214">Clean Code in Python: Develop maintainable and efficient code, 2nd Edition</a></li>
+  <li><a href="https://realpython.com/inheritance-composition-python/">Inheritance and Composition: A Python OOP Guide</a></li>
+  <li><a href="https://python.plainenglish.io/when-to-use-inheritance-and-when-not-to-in-oop-1cac5d4f049">When to Use Inheritance and When Not to in OOP?</a></li>
+  <li><a href="https://codeburst.io/inheritance-is-evil-stop-using-it-6c4f1caf5117">Inheritance Is Evil. Stop Using It.</a></li>
+  <li><a href="https://docs.fast.ai/callback.core.html">FastAI Documentation: Callbacks</a></li>
+</ol>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="riven314/alexlauwh314"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/alexlauwh314/software/design/2022/06/12/WhenInheritance.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/alexlauwh314/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/alexlauwh314/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/riven314" target="_blank" title="riven314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/alex-lau-84b37a134" target="_blank" title="alex-lau-84b37a134"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/AlexLau314" target="_blank" title="AlexLau314"><svg class="svg-icon grey"><use xlink:href="/alexlauwh314/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
