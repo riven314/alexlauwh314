@@ -1,6 +1,6 @@
 ---
 keywords: software
-description: "It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situation in flavor of using inheritance pattern. Note that this is not an introduction to inheritance"
+description: "It is common to see inheritance pattern in Python, but misusing so could lead to ill-maintained code when it scales. This post highlights a few situations in flavor of using inheritance pattern."
 title: "Notes on \"Clean Code in Python\" — When to Apply Inheritance?"
 toc: false
 badges: true
