@@ -71,7 +71,7 @@ Your parent class has captured the overall pipeline, but a few of its components
 
 ### **✨ Example: `BaseHTTPRequestHandler` and `SimpleHTTPRequestHandler`**
 
-First example is extracted from the built-in [http] library. There is a [module](https://github.com/python/cpython/tree/3.10/Lib/http) that contains helper functions for server handling.
+First example is extracted from the built-in [http] library. There is a [module](https://github.com/python/cpython/tree/3.10/Lib/http) with helper functions for server handling.
 
 In the module, `BaseHTTPRequestHandler` is a class for handling HTTP requests in a server. This class implements a number of methods that can run independently. For example:
 
@@ -79,7 +79,7 @@ In the module, `BaseHTTPRequestHandler` is a class for handling HTTP requests in
 - `log_request` for logging an accepted request
 - `send_header` for sending a header to buffer
 
-But here notice how `handle_one_request` is defined. Pay attention to the middle:
+But notice how `handle_one_request` is defined. Pay attention to the middle:
 
 ```python
 class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
@@ -118,11 +118,11 @@ class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
             return
 ```
 
-It attempts to grab and then call the target method (i.e. `method`) whose name has a pattern of “*do_<request type>”* (examples of request type are GET and POST).
+`BaseHTTPRequestHandler` attempts to grab and then call the target method (i.e. `method`) whose name has a pattern of `do_<request type>` (examples of request type are GET and POST), but it doesn’t have any of these methods. Why is that?
 
-However, it doesn’t provide any of these methods. In essence, `BaseHTTPRequestHandler` is designed to follow inheritance. Users are meant to define those interfaces in its child class, such as `SimpleHTTPRequestHandler`.
+It's because `BaseHTTPRequestHandler` is designed to be inherited. Those methods are meant to be defined in its child class. Such setting enables child class to handle different request types in its specific context.
 
-`SimpleHTTPRequestHandler` is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make `SimpleHTTPRequestHandler` extend from `BaseHTTPRequestHandler`:
+`SimpleHTTPRequestHandler` is one example. It is a HTTP request handler specialized in GET and HEAD request types. It handles these request types with a simple rule, defined in `do_GET` and `do_HEAD` methods:
 
 ```python
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
