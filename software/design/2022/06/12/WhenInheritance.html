@@ -192,7 +192,7 @@ window.onload = wrap_img;
 
 <h3 id="-example-basehttprequesthandler-and-simplehttprequesthandler"><strong>✨ Example: <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> and <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code></strong></h3>
 
-<p>First example is extracted from the built-in [http] library. There is a <a href="https://github.com/python/cpython/tree/3.10/Lib/http">module</a> that contains helper functions for server handling.</p>
+<p>First example is extracted from the built-in [http] library. There is a <a href="https://github.com/python/cpython/tree/3.10/Lib/http">module</a> with helper functions for server handling.</p>
 
 <p>In the module, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is a class for handling HTTP requests in a server. This class implements a number of methods that can run independently. For example:</p>
 
@@ -202,7 +202,7 @@ window.onload = wrap_img;
   <li><code class="language-plaintext highlighter-rouge">send_header</code> for sending a header to buffer</li>
 </ul>
 
-<p>But here notice how <code class="language-plaintext highlighter-rouge">handle_one_request</code> is defined. Pay attention to the middle:</p>
+<p>But notice how <code class="language-plaintext highlighter-rouge">handle_one_request</code> is defined. Pay attention to the middle:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">BaseHTTPRequestHandler</span><span class="p">(</span><span class="n">socketserver</span><span class="p">.</span><span class="n">StreamRequestHandler</span><span class="p">):</span>
     <span class="c1">####################################
@@ -240,11 +240,11 @@ window.onload = wrap_img;
             <span class="k">return</span>
 </code></pre></div></div>
 
-<p>It attempts to grab and then call the target method (i.e. <code class="language-plaintext highlighter-rouge">method</code>) whose name has a pattern of “*do_<request type="">”* (examples of request type are GET and POST).</request></p>
+<p><code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> attempts to grab and then call the target method (i.e. <code class="language-plaintext highlighter-rouge">method</code>) whose name has a pattern of <code class="language-plaintext highlighter-rouge">do_&lt;request type&gt;</code> (examples of request type are GET and POST), but it doesn’t have any of these methods. Why is that?</p>
 
-<p>However, it doesn’t provide any of these methods. In essence, <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is designed to follow inheritance. Users are meant to define those interfaces in its child class, such as <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code>.</p>
+<p>It’s because <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code> is designed to be inherited. Those methods are meant to be defined in its child class. Such setting enables child class to handle different request types in its specific context.</p>
 
-<p><code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> is also a HTTP request handler and intends to handle GET and HEAD request types with a simple rule. So it is a good choice to make <code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> extend from <code class="language-plaintext highlighter-rouge">BaseHTTPRequestHandler</code>:</p>
+<p><code class="language-plaintext highlighter-rouge">SimpleHTTPRequestHandler</code> is one example. It is a HTTP request handler specialized in GET and HEAD request types. It handles these request types with a simple rule, defined in <code class="language-plaintext highlighter-rouge">do_GET</code> and <code class="language-plaintext highlighter-rouge">do_HEAD</code> methods:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SimpleHTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
     <span class="c1">####################################
