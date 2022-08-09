@@ -333,7 +333,7 @@ img.emoji { display: inline !important; vertical-align: baseline !important; }
 
 .post-content p, .post-content li { font-size: 20px; color: #515151; }
 
-.language-plaintext { font-size: 18px; }
+.language-plaintext { font-size: 90%; }
 
 .post-link { font-weight: normal; }
 
