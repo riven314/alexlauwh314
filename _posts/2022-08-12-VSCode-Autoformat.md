@@ -13,14 +13,14 @@ layout: post
 ## **Motivation**
 ---
 
-When I was in a data science role, I didn’t give much attention to tools for code formatting. But ever since I transitted to a software engineer, I started appreciating the value of these tools. And I find it even handy to automate them in an IDE.
+When I was in a data science role, I didn’t give much attention to tools for code formatting. Ever since I transitted to a software engineer, I started appreciating the value of these tools. I find it even handy to automate them in an IDE.
 
 The benefits are more than just saving time:
 
 1. It saves you cognitive workload from manual code formatting, hence you can focus on things that are more important
 2. It enforces uniform coding style with your teammates. Your team observes to the same coding style for free once they share the same configuration of a formatter.
 
-Since I personally use VSCode as my IDE, so I will highlight how I install and configure formatter in VSCode and how I automate it when saving a script in Python, Javascript (Typescript) or Rust.
+As I personally use VSCode as my IDE, I will highlight how I install and configure formatter in my VSCode so that it is automatically triggered when saving a script in Python, Javascript (Typescript) or Rust.
 
 It’s just a few simple steps, but your experience will never be the same! Now I cannot part without auto-formatting in my daily coding routine.
 
