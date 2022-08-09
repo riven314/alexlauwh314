@@ -71,7 +71,7 @@ Your parent class has captured the overall pipeline, but a few of its components
 
 ### **✨ Example: `BaseHTTPRequestHandler` and `SimpleHTTPRequestHandler`**
 
-First example is extracted from the built-in [http] library. There is a [module](https://github.com/python/cpython/tree/3.10/Lib/http) with helper functions for server handling.
+First example is extracted from the built-in [http](https://github.com/python/cpython/tree/3.10/Lib/http) library. There is a [module](https://github.com/python/cpython/tree/3.10/Lib/http) with helper functions for server handling.
 
 In the module, `BaseHTTPRequestHandler` is a class for handling HTTP requests in a server. This class implements a number of methods that can run independently. For example:
 
