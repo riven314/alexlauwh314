@@ -33,6 +33,10 @@ img.emoji{
    color: #515151;
 }
 
+.language-plaintext {
+  font-size: 18px;
+}
+
 .post-link{
     font-weight: normal;
 }
@@ -277,4 +281,9 @@ pre code {
 
 .katex-display {
   font-size: 20px;
+}
+
+// Customise callout boxes
+.flash {
+  font-size: 16px;
 }
