@@ -144,7 +144,7 @@ In this post, I have shown you:
 
 You can further explore the functionalities of each formatters and its integration with VSCode.
 
-As an advanced setup, you can even apply multiple formatters on a file upong saving (e.g. applying Black, Flake8 and Isort formatters all in once). If there are enough of readers interested in this trick, I could write an additional blogpost for that!
+As an advanced setup, you can even apply multiple formatters on a script upong saving (e.g. applying Black, Flake8 and Isort formatters all in once). If there are enough of readers interested in this trick, I could write an additional blogpost for that!
 
 ## **References**
 ---
