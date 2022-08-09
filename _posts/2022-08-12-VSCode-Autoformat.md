@@ -20,7 +20,7 @@ The benefits are more than just saving time:
 1. It saves you cognitive workload from manual code formatting, hence you can focus on things that are more important
 2. It enforces uniform coding style with your teammates. Your team observes to the same coding style for free once they share the same configuration of a formatter.
 
-As I personally use VSCode as my IDE, I will highlight how I install and configure formatter in my VSCode so that it is automatically triggered when saving a script in Python, Javascript (Typescript) or Rust.
+I will share how I personally install and configure formatters in my VSCode, so that it can be automatically triggered when saving a script in Python, Javascript (Typescript) or Rust.
 
 It’s just a few simple steps, but your experience will never be the same! Now I cannot part without auto-formatting in my daily coding routine.
 
@@ -64,8 +64,7 @@ Here is a short demo of how it behaves when I save a Python file:
 
 <br>
 
-{% include note.html content='Besides Black Formatter, there are other Python formatters available in Extension Market. For example, Isort for importing sorting.
-Alternatively, these formatters comes as a package, so that you can apply them in command line. For example, Black Formatter is making use of Black package underneath the hood. Flake8 is another package for code formatting but it doesn’t have an extension in VSCode. Feel free to explore them on your own!' %}
+{% include note.html content='Besides Black Formatter, there are other Python formatters As I personally use VSCode as my IDE, 
 
 ## **Javascript (or Typescript)**
 ---
@@ -128,9 +127,7 @@ Now auto-formatting is ready for Javacsript! Here is a demo:
 1. Optional: Customising rules in rust-analyzer requires more effort, you can refer to [this documentation](https://github.com/rust-lang/rust-analyzer/blob/master/docs/user/manual.adoc#configuration) for details. Its default setting suffices in most use cases. 
 
 
-Here is the final demo to showcase the auto-formatting in Rust script:
-    
-![Screen Recording 2022-07-30 at 4.07.54 PM.mov]({{ site.baseurl }}/images/2022-08-12-VSCode-Autoformat/rust_analyzer_demo.gif)
+Here is the final demo to showcase the auto-formatting in Rust script:As I personally use VSCode as my IDE, 2022-08-12-VSCode-Autoformat/rust_analyzer_demo.gif)
     
 
 ## **Conclusion**
