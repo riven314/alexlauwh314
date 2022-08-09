@@ -64,7 +64,7 @@ Here is a short demo of how it behaves when I save a Python file:
 
 <br>
 
-{% include note.html content='Besides Black Formatter, there are other Python formatters As I personally use VSCode as my IDE, 
+{% include note.html content='Besides Black Formatter, there are other Python formatters available in Extension Market. For example, Isort for importing sorting. Alternatively, these formatters comes as a package, so that you can apply them in command line. For example, Black Formatter is making use of Black package underneath the hood. Flake8 is another package for code formatting but it doesn’t have an extension in VSCode. Feel free to explore them on your own!' %}
 
 ## **Javascript (or Typescript)**
 ---
@@ -127,8 +127,9 @@ Now auto-formatting is ready for Javacsript! Here is a demo:
 1. Optional: Customising rules in rust-analyzer requires more effort, you can refer to [this documentation](https://github.com/rust-lang/rust-analyzer/blob/master/docs/user/manual.adoc#configuration) for details. Its default setting suffices in most use cases. 
 
 
-Here is the final demo to showcase the auto-formatting in Rust script:As I personally use VSCode as my IDE, 2022-08-12-VSCode-Autoformat/rust_analyzer_demo.gif)
-    
+Here is the final demo to showcase the auto-formatting in Rust script:
+
+![Screen Recording 2022-07-30 at 3.51.57 PM.mov]({{ site.baseurl }}/images/2022-08-12-VSCode-Autoformat/rust_analyzer_demo.gif)
 
 ## **Conclusion**
 ---
